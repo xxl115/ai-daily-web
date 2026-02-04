@@ -1,26 +1,78 @@
-import Link from 'next/link'
+'use client';
+
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { Article } from '@/lib/types';
+import { fetchArticles, getMockArticles } from '@/lib/api';
+import { StatsBar } from '@/components/layout/StatsBar';
+import { SearchBar } from '@/components/layout/SearchBar';
+import { SourceFilter } from '@/components/filters/SourceFilter';
+import { ArticleList } from '@/components/article/ArticleList';
 
 export default function HomePage() {
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedSource, setSelectedSource] = useState('');
+  const [searchKeyword, setSearchKeyword] = useState('');
+
+  useEffect(() => {
+    loadArticles();
+  }, []);
+
+  const loadArticles = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchArticles(100);
+      if (data.length > 0) {
+        setArticles(data);
+      } else {
+        // Fallback to mock data
+        setArticles(getMockArticles());
+      }
+    } catch (error) {
+      console.error('Failed to load articles:', error);
+      setArticles(getMockArticles());
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredArticles = articles.filter(article => {
+    const matchSource = !selectedSource || article.source === selectedSource;
+    const matchKeyword = !searchKeyword ||
+      article.title.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+      article.source.toLowerCase().includes(searchKeyword.toLowerCase());
+    return matchSource && matchKeyword;
+  });
+
+  const sourcesCount = new Set(articles.map(a => a.source)).size;
+  const hotArticles = articles.filter(a => a.hotScore >= 100).length;
+
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <header className="border-b border-white/10 sticky top-0 bg-background-primary/95 backdrop-blur z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary-light rounded-xl flex items-center justify-center text-2xl">
+            <Link href="/" className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-light rounded-xl flex items-center justify-center text-xl">
                 🤖
               </div>
-              <h1 className="text-2xl font-bold">AI Daily</h1>
-            </div>
-            <nav className="flex gap-6">
-              <Link href="/" className="text-text-secondary hover:text-text-primary transition-colors">
+              <h1 className="text-xl font-bold">AI Daily</h1>
+            </Link>
+            <nav className="flex gap-6 text-sm">
+              <Link href="/" className="text-text-primary font-medium">
                 首页
               </Link>
               <Link href="/timeline" className="text-text-secondary hover:text-text-primary transition-colors">
                 时间线
               </Link>
-              <a href="https://github.com/xxl115/ai-daily-collector" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-text-primary transition-colors">
+              <a
+                href="https://github.com/xxl115/ai-daily-collector"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-text-secondary hover:text-text-primary transition-colors"
+              >
                 GitHub
               </a>
             </nav>
@@ -30,73 +82,51 @@ export default function HomePage() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Bar */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-background-card rounded-xl p-6 border border-white/10">
-            <div className="text-text-muted text-sm mb-1">今日采集</div>
-            <div className="text-3xl font-bold">-</div>
-          </div>
-          <div className="bg-background-card rounded-xl p-6 border border-white/10">
-            <div className="text-text-muted text-sm mb-1">热点文章</div>
-            <div className="text-3xl font-bold">-</div>
-          </div>
-          <div className="bg-background-card rounded-xl p-6 border border-white/10">
-            <div className="text-text-muted text-sm mb-1">数据来源</div>
-            <div className="text-3xl font-bold">-</div>
-          </div>
-          <div className="bg-background-card rounded-xl p-6 border border-white/10">
-            <div className="text-text-muted text-sm mb-1">最后更新</div>
-            <div className="text-3xl font-bold">-</div>
-          </div>
+        {/* Search */}
+        <div className="mb-6">
+          <SearchBar onSearch={setSearchKeyword} />
         </div>
+
+        {/* Stats */}
+        <StatsBar
+          total={articles.length}
+          hot={hotArticles}
+          sources={sourcesCount}
+          lastUpdate={articles[0]?.publishedAt}
+        />
 
         {/* Filters */}
-        <div className="flex gap-3 mb-8 overflow-x-auto pb-2">
-          <button className="px-5 py-2 bg-primary text-white rounded-full text-sm font-medium whitespace-nowrap">
-            全部
-          </button>
-          <button className="px-5 py-2 bg-background-card border border-white/10 text-text-secondary rounded-full text-sm font-medium whitespace-nowrap hover:bg-background-hover transition-colors">
-            Hacker News
-          </button>
-          <button className="px-5 py-2 bg-background-card border border-white/10 text-text-secondary rounded-full text-sm font-medium whitespace-nowrap hover:bg-background-hover transition-colors">
-            V2EX
-          </button>
-          <button className="px-5 py-2 bg-background-card border border-white/10 text-text-secondary rounded-full text-sm font-medium whitespace-nowrap hover:bg-background-hover transition-colors">
-            GitHub
-          </button>
-        </div>
+        <SourceFilter
+          articles={articles}
+          selectedSource={selectedSource || '全部'}
+          onSelectSource={setSelectedSource}
+        />
 
-        {/* Articles Grid - Loading State */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="bg-background-card rounded-xl border border-white/10 p-6 animate-pulse">
-              <div className="h-4 bg-background-hover rounded mb-3 w-20"></div>
-              <div className="h-6 bg-background-hover rounded mb-4"></div>
-              <div className="h-4 bg-background-hover rounded w-1/2"></div>
-            </div>
-          ))}
-        </div>
-
-        {/* Empty State */}
-        <div className="text-center py-20 text-text-muted">
-          <div className="text-6xl mb-4">🚧</div>
-          <p className="text-xl mb-2">正在建设中...</p>
-          <p className="text-sm">AI Daily Web UI 正在开发中</p>
-        </div>
+        {/* Articles */}
+        <ArticleList
+          articles={filteredArticles}
+          loading={loading}
+          onArticleClick={(article) => window.open(article.url, '_blank', 'noopener,noreferrer')}
+        />
       </main>
 
       {/* Footer */}
       <footer className="border-t border-white/10 mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-text-muted text-sm">
-          <p>数据来源: Hacker News, V2EX, GitHub Trending, AI Blogs, Dev.to</p>
+          <p>数据来源: Hacker News, V2EX, GitHub Trending, AI Blogs, Dev.to, 36氪</p>
           <p className="mt-2">
             Powered by{' '}
-            <a href="https://github.com/xxl115/ai-daily-collector" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+            <a
+              href="https://github.com/xxl115/ai-daily-collector"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
               AI Daily Collector
             </a>
           </p>
         </div>
       </footer>
     </div>
-  )
+  );
 }
