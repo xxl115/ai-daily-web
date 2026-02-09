@@ -7,6 +7,7 @@ import { timeAgo } from '@/lib/utils';
 interface ArticleCardCompactPHProps {
   article: Article;
   onAiClick?: (article: Article) => void;
+  onClick?: () => void;
 }
 
 // Map source names to simple-icons slugs

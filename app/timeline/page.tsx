@@ -81,7 +81,7 @@ export default function TimelinePage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-white/10 sticky top-0 bg-background-primary/95 backdrop-blur z-50">
+      <header className="border-b border-gray-200 sticky top-0 bg-white/95 backdrop-blur z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3">
@@ -130,7 +130,7 @@ export default function TimelinePage() {
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   view === v
                     ? 'bg-primary text-white'
-                    : 'bg-background-card border border-white/10 text-text-secondary hover:bg-background-hover'
+                    : 'bg-background-card border border-gray-200 text-text-secondary hover:bg-background-hover'
                 }`}
               >
                 {v === 'day' ? '日' : v === 'week' ? '周' : '月'}
@@ -143,10 +143,10 @@ export default function TimelinePage() {
         {loading ? (
           <div className="space-y-8">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="border-l-2 border-white/10 pl-6 space-y-4">
+              <div key={i} className="border-l-2 border-gray-200 pl-6 space-y-4">
                 <div className="h-6 bg-background-hover rounded w-40 animate-pulse"></div>
                 {[1, 2].map((j) => (
-                  <div key={j} className="bg-background-card rounded-xl p-6 border border-white/10 animate-pulse">
+                  <div key={j} className="bg-background-card rounded-xl p-6 border border-gray-200 animate-pulse">
                     <div className="h-4 bg-background-hover rounded w-20 mb-3"></div>
                     <div className="h-6 bg-background-hover rounded w-full mb-2"></div>
                     <div className="h-4 bg-background-hover rounded w-1/2"></div>
@@ -164,7 +164,7 @@ export default function TimelinePage() {
         ) : (
           <div className="space-y-8">
             {groupedArticles.map(([dateStr, items]) => (
-              <div key={dateStr} className="border-l-2 border-white/10 pl-6">
+              <div key={dateStr} className="border-l-2 border-gray-200 pl-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-bold">{formatDate(dateStr)}</h3>
                   <span className="text-text-muted text-sm">{items.length} 篇</span>
@@ -185,7 +185,7 @@ export default function TimelinePage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 mt-20">
+      <footer className="border-t border-gray-200 mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-text-muted text-sm">
           <p>数据来源: Hacker News, V2EX, GitHub Trending, AI Blogs, Dev.to, 36氪</p>
           <p className="mt-2">
