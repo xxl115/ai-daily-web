@@ -1,0 +1,4 @@
+[   55765ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT @ https://ai-daily-collector.xxl185.workers.dev/api/hotspots?limit=100&period=today:0
+[   77695ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT @ https://ai-daily-collector.xxl185.workers.dev/api/hotspots?limit=100&period=today:0
+[  132074ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT @ https://ai-daily-collector.xxl185.workers.dev/api/hotspots?limit=100&period=today:0
+[  155001ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT @ https://ai-daily-collector.xxl185.workers.dev/api/hotspots?limit=100&period=today:0

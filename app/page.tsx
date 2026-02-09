@@ -1,27 +1,23 @@
 'use client';
 
 import { useState } from 'react';
-import { SideNav } from '@/components/layout/SideNav';
-import { TimeNav } from '@/components/layout/TimeNav';
-import { Article, TimePeriod } from '@/lib/types';
+import { Article } from '@/lib/types';
 import { getMockArticles } from '@/lib/api';
 import { SearchBar } from '@/components/layout/SearchBar';
+import { TimeNav } from '@/components/layout/TimeNav';
 import { SourceFilterPills } from '@/components/filters/SourceFilterPills';
 import { ArticleListPH } from '@/components/article/ArticleListPH';
-import { StatsPanel } from '@/components/layout/StatsPanel';
-import { useTimePeriodArticles } from '@/hooks/useTimePeriodArticles';
+
+type Period = 'today' | 'yesterday' | 'week' | 'month';
 
 export default function HomePage() {
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [period, setPeriod] = useState<TimePeriod>('today');
+  const [period, setPeriod] = useState<Period>('today');
 
-  // Use React Query hook for data fetching
-  const { data, isLoading, error } = useTimePeriodArticles(period);
-
-  // Fallback to mock data if API fails or returns empty
-  const articles = (data?.data && data.data.length > 0) ? data.data : getMockArticles();
-  const loading = isLoading && !articles.length;
+  // Use mock data for now
+  const articles = getMockArticles();
+  const loading = false;
 
   const filteredArticles = articles.filter(article => {
     const matchSource = !selectedSource || article.source === selectedSource;
@@ -31,68 +27,57 @@ export default function HomePage() {
     return matchSource && matchKeyword;
   });
 
-  const sources = Array.from(new Set(articles.map(a => a.source)))
-    .map(name => ({ name, count: articles.filter(a => a.source === name).length }))
-    .sort((a, b) => b.count - a.count);
-
-  const hotArticlesList = articles
-    .filter(a => a.hotScore >= 100)
-    .sort((a, b) => b.hotScore - a.hotScore)
-    .slice(0, 5);
-
-  const hotArticles = articles.filter(a => a.hotScore >= 100).length;
-
-  // Period labels
-  const periodLabels: Record<Period, string> = {
-    today: '今日热门',
-    yesterday: '昨日热门',
-    week: '本周热门',
-    month: '上月热门',
-  };
-
   return (
-    <div className="min-h-screen bg-[#F9FAFB] flex">
-      {/* Left Sidebar - hidden on mobile, collapsible on desktop */}
-      <SideNav sources={sources} hotArticles={hotArticlesList} currentPeriod={period} />
+    <div className="min-h-screen bg-[#F7F7F5]">
+      {/* Header - Fixed top */}
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+        <div className="max-w-[740px] mx-auto px-4">
+          {/* Top Row: Logo + Nav */}
+          <div className="flex items-center justify-between h-14">
+            <a href="/" className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-pink-500 rounded-lg flex items-center justify-center">
+                <span className="text-white text-sm font-bold">AI</span>
+              </div>
+              <span className="text-lg font-bold text-gray-900">AI Daily</span>
+            </a>
 
-      {/* Main Content - flexible width with responsive margins */}
-      <main className="flex-1 min-w-0 lg:ml-[240px] xl:mr-[320px]">
-        <div className="max-w-[760px] mx-auto px-4 sm:px-6 py-6 sm:py-8">
-          {/* Search Bar - Full width */}
-          <div className="mb-6">
-            <SearchBar onSearch={setSearchKeyword} />
+            <nav className="flex items-center gap-4 text-sm">
+              <a href="/" className="font-medium text-gray-900">首页</a>
+              <a href="/timeline" className="text-gray-500 hover:text-gray-700">时间线</a>
+            </nav>
           </div>
 
-          {/* Period Title */}
-          <h2 className="text-xl font-bold text-[#111827] mb-4">
-            {periodLabels[period]}
-          </h2>
-
-          {/* Time Navigation */}
-          <div className="mb-6">
+          {/* Second Row: Time Navigation */}
+          <div className="pb-3">
             <TimeNav value={period} onChange={setPeriod} />
           </div>
+        </div>
+      </header>
 
-          {/* Source Filter Pills */}
+      {/* Main Content - Single column centered */}
+      <main className="max-w-[740px] mx-auto">
+        {/* Search Bar */}
+        <div className="px-4 py-4 border-b border-gray-200">
+          <SearchBar onSearch={setSearchKeyword} />
+        </div>
+
+        {/* Source Filter Pills */}
+        <div className="px-4 py-3 border-b border-gray-200">
           <SourceFilterPills
             articles={articles}
             selectedSource={selectedSource}
             onSelectSource={setSelectedSource}
           />
+        </div>
 
-          {/* Articles List */}
-          <div className="mt-6">
-            <ArticleListPH
-              articles={filteredArticles}
-              loading={loading}
-              onArticleClick={(article) => window.open(article.url, '_blank', 'noopener,noreferrer')}
-            />
-          </div>
+        {/* Articles List */}
+        <div className="bg-white border-x border-gray-200">
+          <ArticleListPH
+            articles={filteredArticles}
+            loading={loading}
+          />
         </div>
       </main>
-
-      {/* Right Sidebar - hidden on medium and smaller screens */}
-      <StatsPanel total={articles.length} hot={hotArticles} sources={sources.length} />
     </div>
   );
 }

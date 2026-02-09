@@ -35,5 +35,7 @@ export function useTimePeriodArticles(
     enabled,
     staleTime: 5 * 60 * 1000, // 5 分钟
     gcTime: 10 * 60 * 1000, // 10 分钟
+    retry: 1, // 只重试一次
+    retryDelay: 1000, // 1秒后重试
   });
 }

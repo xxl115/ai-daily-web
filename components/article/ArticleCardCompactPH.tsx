@@ -2,10 +2,11 @@
 
 import { Article } from '@/lib/types';
 import * as SimpleIcons from 'simple-icons';
-import { timeAgo } from '@/lib/utils';
+import { memo } from 'react';
 
 interface ArticleCardCompactPHProps {
   article: Article;
+  index?: number;
   onAiClick?: (article: Article) => void;
   onClick?: () => void;
 }
@@ -17,85 +18,102 @@ const sourceIconMap: Record<string, string> = {
   'Product Hunt': 'producthunt',
   'V2EX': 'v2ex',
   'OpenAI': 'openai',
+  'OpenAI Blog': 'openai',
   'Dev.to': 'devdotto',
   'TechCrunch': 'techcrunch',
   'The Verge': 'theverge',
-  '36氪': '36kr',
+  '36氪': 'thirtysixkr',
   '掘金': 'juejin',
   '知乎': 'zhihu',
   '微信公众号': 'wechat',
+  'MIT Tech Review': 'mittechnologyreview',
+  'Wired': 'wired',
+  'VentureBeat': 'venturebeat',
+  'Ars Technica': 'arstechnica',
 };
 
-function getSourceIcon(source: string): string {
-  const iconSlug = sourceIconMap[source] || 'generic';
-  const icon = (SimpleIcons as unknown as Record<string, () => { svg: string }>)[iconSlug];
-  if (icon) {
-    return icon().svg;
+function getSourceIcon(source: string): string | null {
+  const iconSlug = sourceIconMap[source];
+  if (!iconSlug) return null;
+
+  const iconModule = (SimpleIcons as unknown as Record<string, { svg: string; hex: string }>);
+  if (iconModule[iconSlug]) {
+    return iconModule[iconSlug].svg;
   }
-  // Return a default SVG if not found
-  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>';
+  return null;
 }
 
-function getScoreColor(score: number): string {
-  if (score >= 100) return 'text-orange-500';
-  if (score >= 50) return 'text-red-500';
-  if (score >= 20) return 'text-blue-500';
-  return 'text-gray-500';
-}
-
-export function ArticleCardCompactPH({ article, onAiClick }: ArticleCardCompactPHProps) {
+export const ArticleCardCompactPH = memo(function ArticleCardCompactPH({
+  article,
+  index = 0,
+  onAiClick,
+}: ArticleCardCompactPHProps) {
   const iconSvg = getSourceIcon(article.source);
-  const encodedIcon = encodeURIComponent(iconSvg);
+  const encodedIcon = iconSvg ? encodeURIComponent(iconSvg) : null;
+
+  const handleCardClick = () => {
+    window.open(article.url, '_blank', 'noopener,noreferrer');
+  };
 
   return (
-    <div className="group bg-white rounded-[6px] border border-gray-200 p-[10px] gap-[6px] flex items-center hover:shadow-sm hover:translate-y-[-1px] transition-all duration-200 cursor-pointer">
-      {/* Source Icon - 32x32px */}
-      <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-gray-50 rounded-md overflow-hidden">
-        <img
-          src={`data:image/svg+xml,${encodedIcon}`}
-          alt={article.source}
-          className="w-6 h-6"
-          style={{ color: '#6B7280' }}
-        />
+    <div
+      className="group flex items-start gap-3 py-3 px-4 hover:bg-gray-50 transition-colors cursor-pointer"
+      onClick={handleCardClick}
+    >
+      {/* Left: Rank + Icon */}
+      <div className="flex items-center gap-3 flex-shrink-0">
+        {/* Rank Number - subtle */}
+        <span className="text-xs font-medium text-gray-300 w-4 text-center">
+          {index + 1}
+        </span>
+
+        {/* Product Icon - 48x48 rounded */}
+        <div className="w-12 h-12 flex-shrink-0 bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm flex items-center justify-center">
+          {encodedIcon ? (
+            <img
+              src={`data:image/svg+xml,${encodedIcon}`}
+              alt={article.source}
+              className="w-8 h-8"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-500 to-pink-500 text-white text-xs font-bold">
+              {article.source.slice(0, 2)}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 min-w-0">
-        {/* Title - 16px */}
-        <h3
-          className="text-[16px] font-medium text-gray-900 leading-tight truncate cursor-pointer hover:text-orange-500 transition-colors"
-          onClick={() => window.open(article.url, '_blank', 'noopener,noreferrer')}
-        >
+      {/* Middle: Content */}
+      <div className="flex-1 min-w-0 pt-1">
+        {/* Title */}
+        <h3 className="text-[15px] font-semibold text-gray-900 leading-snug mb-1 group-hover:text-orange-600 transition-colors">
           {article.title}
         </h3>
-        {/* Meta - 12px */}
-        <p className="text-[12px] text-gray-500 mt-[2px]">
-          {article.source} · {timeAgo(article.publishedAt)}
-        </p>
+
+        {/* Tags */}
+        <div className="flex items-center gap-2 text-[13px] text-gray-400">
+          <span className="hover:text-gray-600 transition-colors">{article.source}</span>
+        </div>
       </div>
 
-      {/* Right Side - Heat Score + AI */}
-      <div className="flex-shrink-0 flex items-center gap-2">
-        {/* Heat Score - Large number + 🔥 */}
-        <span className={`text-lg font-bold ${getScoreColor(article.hotScore)}`}>
-          {article.hotScore}
-        </span>
-        <span className="text-orange-500">🔥</span>
-
-        {/* AI Button - Icon */}
+      {/* Right: Upvote Button - Product Hunt style */}
+      <div className="flex-shrink-0 pt-1">
         <button
           onClick={(e) => {
             e.stopPropagation();
-            onAiClick?.(article);
           }}
-          className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-100 transition-colors"
-          title="AI 摘要"
+          className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all"
         >
-          <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+          {/* Up Arrow Icon */}
+          <svg className="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <path d="M12 19V5M5 12l7-7 7 7" />
           </svg>
+          {/* Vote Count */}
+          <span className="text-sm font-semibold text-gray-500">
+            {article.hotScore}
+          </span>
         </button>
       </div>
     </div>
   );
-}
+});
