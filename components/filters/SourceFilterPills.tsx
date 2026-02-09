@@ -25,14 +25,14 @@ export function SourceFilterPills({ articles, selectedSource, onSelectSource }: 
   if (sources.length === 0) return null;
 
   return (
-    <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
+    <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
       <button
         onClick={() => onSelectSource(null)}
         className={cn(
-          'flex-shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-sm',
+          'flex-shrink-0 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 whitespace-nowrap',
           selectedSource === null
-            ? 'bg-[#FF6B4A] text-white shadow-md'
-            : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+            ? 'bg-gradient-to-r from-[#FF6B4A] to-[#F97316] text-white shadow-lg shadow-[#FF6B4A]/20'
+            : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white/80 border border-white/10'
         )}
       >
         全部
@@ -42,10 +42,10 @@ export function SourceFilterPills({ articles, selectedSource, onSelectSource }: 
           key={name}
           onClick={() => onSelectSource(name === selectedSource ? null : name)}
           className={cn(
-            'flex-shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap shadow-sm',
+            'flex-shrink-0 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 whitespace-nowrap',
             selectedSource === name
-              ? 'bg-[#FF6B4A] text-white shadow-md'
-              : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+              ? 'bg-gradient-to-r from-[#FF6B4A] to-[#F97316] text-white shadow-lg shadow-[#FF6B4A]/20'
+              : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white/80 border border-white/10'
           )}
         >
           {name}
