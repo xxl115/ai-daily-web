@@ -5,9 +5,8 @@ import { Article } from '@/lib/types';
 import { getMockArticles } from '@/lib/api';
 import { SearchBar } from '@/components/layout/SearchBar';
 import { SourceFilterPills } from '@/components/filters/SourceFilterPills';
-import { ArticleListMagazine } from '@/components/article/ArticleListMagazine';
-import { SideNav } from '@/components/layout/SideNav';
-import { StatsPanel } from '@/components/layout/StatsPanel';
+import { ArticleFeed } from '@/components/article/ArticleFeed';
+import { Sidebar } from '@/components/layout/Sidebar';
 
 type Period = 'today' | 'yesterday' | 'week' | 'month';
 
@@ -41,54 +40,59 @@ export default function HomePage() {
   const hotCount = articles.filter(a => a.hotScore >= 100).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      {/* Ambient background effects */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#FF6B4A]/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-      </div>
-
-      <div className="relative flex">
-        {/* Left Sidebar - 240px */}
-        <SideNav
-          sources={sources}
-          hotArticles={hotArticlesList}
-          currentPeriod={period}
-          onPeriodChange={setPeriod}
-        />
-
-        {/* Main Content - max 760px */}
-        <main className="flex-1 min-w-0 max-w-[760px]">
-          <div className="px-6 py-8">
-            {/* Hero Section with Magazine-style Typography */}
-            <div className="mb-8 relative">
-              <div className="absolute -top-20 -left-20 text-[180px] font-black text-white/5 leading-none select-none">
-                {period === 'today' ? 'TODAY' : period === 'yesterday' ? 'YDAY' : period === 'week' ? 'WEEK' : 'MONTH'}
-              </div>
-
-              <h1 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-gray-400 mb-2 tracking-tight">
-                {period === 'today' ? '今日热门' : period === 'yesterday' ? '昨日热门' : period === 'week' ? '本周热门' : '上月热门'}
-              </h1>
-
-              <p className="text-lg text-gray-400 font-light max-w-md">
-                发现最新的 AI 资讯和趋势
-              </p>
-
-              {/* Decorative line */}
-              <div className="mt-6 flex items-center gap-4">
-                <div className="h-px flex-1 bg-gradient-to-r from-[#FF6B4A] to-transparent" />
-                <div className="w-2 h-2 bg-[#FF6B4A] rotate-45" />
-              </div>
+    <div className="min-h-screen bg-slate-50">
+      {/* Top Navigation Bar */}
+      <nav className="sticky top-0 z-50 bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center gap-8">
+          {/* Logo */}
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
+              <span className="text-white text-sm font-bold">AI</span>
             </div>
+            <span className="text-lg font-bold text-slate-900">AI Daily</span>
+          </div>
 
-            {/* Search Bar */}
-            <div className="mb-6">
-              <SearchBar onSearch={setSearchKeyword} />
-            </div>
+          {/* Search */}
+          <div className="flex-1 max-w-md">
+            <SearchBar onSearch={setSearchKeyword} />
+          </div>
+
+          {/* Time Navigation */}
+          <div className="flex items-center gap-1">
+            {[
+              { key: 'today', label: '今日' },
+              { key: 'yesterday', label: '昨日' },
+              { key: 'week', label: '本周' },
+              { key: 'month', label: '本月' },
+            ].map((item) => (
+              <button
+                key={item.key}
+                onClick={() => setPeriod(item.key as Period)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  period === item.key
+                    ? 'bg-orange-500 text-white'
+                    : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content Layout */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex gap-8 py-8">
+          {/* Left: Main Feed */}
+          <main className="flex-1 min-w-0">
+            {/* Title */}
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-6">
+              {period === 'today' ? '今日热门' : period === 'yesterday' ? '昨日热门' : period === 'week' ? '本周热门' : '本月热门'}
+            </h1>
 
             {/* Source Filter Pills */}
-            <div className="mb-8">
+            <div className="mb-6">
               <SourceFilterPills
                 articles={articles}
                 selectedSource={selectedSource}
@@ -96,20 +100,23 @@ export default function HomePage() {
               />
             </div>
 
-            {/* Articles List */}
-            <ArticleListMagazine
+            {/* Product Feed */}
+            <ArticleFeed
               articles={filteredArticles}
               loading={loading}
             />
-          </div>
-        </main>
+          </main>
 
-        {/* Right Sidebar - 320px */}
-        <StatsPanel
-          total={articles.length}
-          hot={hotCount}
-          sources={sources.length}
-        />
+          {/* Right: Sidebar */}
+          <aside className="w-80 flex-shrink-0 hidden lg:block">
+            <Sidebar
+              sources={sources}
+              hotArticles={hotArticlesList}
+              total={articles.length}
+              hot={hotCount}
+            />
+          </aside>
+        </div>
       </div>
     </div>
   );
