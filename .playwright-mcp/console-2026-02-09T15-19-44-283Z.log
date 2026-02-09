@@ -1,0 +1,3 @@
+[   41969ms] [WARNING] Datadog Browser SDK: No storage available for session. We will not send any data. @ https://www.producthunt.com/_next/static/chunks/7bca70bb42a641af.js:4
+[   42071ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://www.producthunt.com/manifest.json:0
+[   42218ms] [ERROR] Manifest fetch from https://www.producthunt.com/manifest.json failed, code 403 @ https://www.producthunt.com/:0
