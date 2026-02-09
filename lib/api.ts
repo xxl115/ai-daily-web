@@ -3,6 +3,13 @@ import { ApiResponse, Article } from './types';
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://ai-daily-collector.xxl185.workers.dev';
 const HOTSPOTS_API = `${API_BASE}/api/hotspots`;
 
+// API client for use in hooks
+export const apiClient = {
+  getArticles: (limit: number = 100) => fetch(`${HOTSPOTS_API}?limit=${limit}`).then(r => r.json()),
+  getArticle: (id: string) => fetch(`${API_BASE}/api/article/${id}`).then(r => r.json()),
+  getSummary: (url: string) => fetch(`${API_BASE}/api/summary?url=${encodeURIComponent(url)}`).then(r => r.json()),
+};
+
 export async function fetchArticles(limit: number = 100): Promise<Article[]> {
   try {
     const response = await fetch(`${HOTSPOTS_API}?limit=${limit}`);
