@@ -29,3 +29,11 @@ export interface ArticleFilters {
   keyword?: string;
   limit?: number;
 }
+
+// 时间周期类型
+export type TimePeriod = 'today' | 'yesterday' | 'week' | 'month';
+
+export interface TimeFilter {
+  period: TimePeriod;
+  label: string;
+}
