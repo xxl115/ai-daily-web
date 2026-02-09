@@ -1,44 +1,27 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { SideNav } from '@/components/layout/SideNav';
 import { TimeNav } from '@/components/layout/TimeNav';
-import { Article } from '@/lib/types';
-import { fetchArticles, getMockArticles } from '@/lib/api';
+import { Article, TimePeriod } from '@/lib/types';
+import { getMockArticles } from '@/lib/api';
 import { SearchBar } from '@/components/layout/SearchBar';
 import { SourceFilterPills } from '@/components/filters/SourceFilterPills';
 import { ArticleListPH } from '@/components/article/ArticleListPH';
 import { StatsPanel } from '@/components/layout/StatsPanel';
-
-type Period = 'today' | 'yesterday' | 'week' | 'month';
+import { useTimePeriodArticles } from '@/hooks/useTimePeriodArticles';
 
 export default function HomePage() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [period, setPeriod] = useState<Period>('today');
+  const [period, setPeriod] = useState<TimePeriod>('today');
 
-  useEffect(() => {
-    loadArticles();
-  }, [period]); // Reload when period changes
+  // Use React Query hook for data fetching
+  const { data, isLoading, error } = useTimePeriodArticles(period);
 
-  const loadArticles = async () => {
-    setLoading(true);
-    try {
-      const data = await fetchArticles(100);
-      if (data.length > 0) {
-        setArticles(data);
-      } else {
-        setArticles(getMockArticles());
-      }
-    } catch (error) {
-      console.error('Failed to load articles:', error);
-      setArticles(getMockArticles());
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Fallback to mock data if API fails or returns empty
+  const articles = (data?.data && data.data.length > 0) ? data.data : getMockArticles();
+  const loading = isLoading && !articles.length;
 
   const filteredArticles = articles.filter(article => {
     const matchSource = !selectedSource || article.source === selectedSource;
