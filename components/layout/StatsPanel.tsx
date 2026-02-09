@@ -8,7 +8,8 @@ interface StatsPanelProps {
 
 export function StatsPanel({ total, hot, sources }: StatsPanelProps) {
   return (
-    <aside className="fixed right-0 top-0 bottom-0 w-[320px] bg-white border-l border-[#E5E7EB] p-6 z-40 overflow-y-auto">
+    // Hide on medium screens, show on large screens
+    <aside className="hidden xl:block fixed right-0 top-0 bottom-0 w-[320px] bg-white border-l border-[#E5E7EB] p-6 z-40 overflow-y-auto">
       {/* Stats Cards */}
       <div className="space-y-4">
         <div className="bg-[#F9FAFB] rounded-lg p-4 border border-[#E5E7EB]">

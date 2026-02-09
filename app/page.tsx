@@ -52,12 +52,12 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#F9FAFB] flex">
-      {/* Left Sidebar - 240px */}
+      {/* Left Sidebar - hidden on mobile, collapsible on desktop */}
       <SideNav sources={sources} hotArticles={hotArticlesList} currentPeriod={period} />
 
-      {/* Main Content - flexible width */}
-      <main className="flex-1 min-w-0">
-        <div className="max-w-[760px] mx-auto px-6 py-8">
+      {/* Main Content - flexible width with responsive margins */}
+      <main className="flex-1 min-w-0 lg:ml-[240px] xl:mr-[320px]">
+        <div className="max-w-[760px] mx-auto px-4 sm:px-6 py-6 sm:py-8">
           {/* Search Bar - Full width */}
           <div className="mb-6">
             <SearchBar onSearch={setSearchKeyword} />
@@ -91,7 +91,7 @@ export default function HomePage() {
         </div>
       </main>
 
-      {/* Right Sidebar - 320px */}
+      {/* Right Sidebar - hidden on medium and smaller screens */}
       <StatsPanel total={articles.length} hot={hotArticles} sources={sources.length} />
     </div>
   );
