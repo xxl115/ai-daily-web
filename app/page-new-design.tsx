@@ -52,7 +52,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen relative">
       {/* Header */}
-      <header className="border-b border-gray-200 sticky top-0 z-50 bg-white/95 backdrop-blur shadow-sm">
+      <header className="border-b border-white/5 sticky top-0 z-50 glass">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3 group">
@@ -154,15 +154,15 @@ export default function HomePage() {
             )}
           </div>
 
-          {/* 右侧：侧边栏（平板及以上显示） */}
-          <div className="hidden md:block animate-fade-in-up stagger-2">
+          {/* 右侧：侧边栏 */}
+          <div className="hidden lg:block animate-fade-in-up stagger-2">
             <SidebarNew articles={articles} />
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 mt-20 relative z-10 bg-white">
+      <footer className="border-t border-white/5 mt-20 relative z-10">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-text-muted text-sm">
           <p>数据来源: Hacker News, V2EX, GitHub Trending, AI Blogs, Dev.to, 36氪</p>
           <p className="mt-2">

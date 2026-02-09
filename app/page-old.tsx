@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { Article } from '@/lib/types';
 import { fetchArticles, getMockArticles } from '@/lib/api';
 import { SearchBar } from '@/components/layout/SearchBar';
-import { SidebarNew } from '@/components/layout/SidebarNew';
-import { ArticleCardPH } from '@/components/article/ArticleCardPH';
+import { Sidebar } from '@/components/layout/Sidebar';
+import { ArticleCardCompact } from '@/components/article/ArticleCardCompact';
 import { SourceFilter } from '@/components/filters/SourceFilter';
 import { Skeleton } from '@/components/ui/Skeleton';
 
@@ -15,10 +15,8 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [selectedSource, setSelectedSource] = useState('');
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     loadArticles();
   }, []);
 
@@ -29,6 +27,7 @@ export default function HomePage() {
       if (data.length > 0) {
         setArticles(data);
       } else {
+        // Fallback to mock data
         setArticles(getMockArticles());
       }
     } catch (error) {
@@ -50,32 +49,29 @@ export default function HomePage() {
   const hotArticles = articles.filter(a => a.hotScore >= 100).length;
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-gray-200 sticky top-0 z-50 bg-white/95 backdrop-blur shadow-sm">
+      <header className="border-b border-white/10 sticky top-0 bg-background-primary/95 backdrop-blur z-50">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-12 h-12 gradient-brand rounded-xl flex items-center justify-center text-2xl shadow-lg group-hover:scale-105 transition-transform">
+            <Link href="/" className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-light rounded-xl flex items-center justify-center text-xl">
                 🤖
               </div>
-              <div>
-                <h1 className="font-display font-bold text-xl gradient-text">AI Daily</h1>
-                <p className="text-xs text-text-muted">每日 AI 热点资讯</p>
-              </div>
+              <h1 className="text-xl font-bold">AI Daily</h1>
             </Link>
             <nav className="flex gap-6 text-sm">
-              <Link href="/" className="text-text-primary font-medium border-b-2 border-brand pb-1">
+              <Link href="/" className="text-text-primary font-medium">
                 首页
               </Link>
-              <Link href="/timeline" className="text-text-secondary hover:text-text-primary transition-colors pb-1">
+              <Link href="/timeline" className="text-text-secondary hover:text-text-primary transition-colors">
                 时间线
               </Link>
               <a
                 href="https://github.com/xxl115/ai-daily-collector"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-text-secondary hover:text-text-primary transition-colors pb-1"
+                className="text-text-secondary hover:text-text-primary transition-colors"
               >
                 GitHub
               </a>
@@ -84,49 +80,41 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+      {/* Main Content - 左右分栏布局 */}
+      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
           {/* 左侧：主内容区 */}
           <div className="flex-1 min-w-0">
             {/* 搜索和统计 */}
-            <div className="mb-6 space-y-4 animate-fade-in-up">
+            <div className="mb-6 space-y-4">
               <SearchBar onSearch={setSearchKeyword} />
 
               {/* 统计信息 */}
-              <div className="flex items-center gap-6 text-sm">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-accent-green animate-pulse"></span>
-                  <span className="text-text-muted">今日采集</span>
-                  <strong className="text-text-primary font-display">{articles.length}</strong>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-brand"></span>
-                  <span className="text-text-muted">热点文章</span>
-                  <strong className="text-text-primary font-display">{hotArticles}</strong>
-                </div>
+              <div className="flex items-center gap-4 text-sm text-text-muted">
+                <span>今日采集 <strong className="text-text-primary">{articles.length}</strong> 篇</span>
+                <span>·</span>
+                <span>热点文章 <strong className="text-text-primary">{hotArticles}</strong> 篇</span>
               </div>
             </div>
 
             {/* 筛选器 */}
-            <div className="mb-6 animate-fade-in-up stagger-1">
-              <SourceFilter
-                articles={articles}
-                selectedSource={selectedSource || '全部'}
-                onSelectSource={setSelectedSource}
-              />
-            </div>
+            <SourceFilter
+              articles={articles}
+              selectedSource={selectedSource || '全部'}
+              onSelectSource={setSelectedSource}
+            />
 
             {/* 文章列表 */}
             {loading ? (
               <div className="space-y-4">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="bg-background-card rounded-2xl border border-white/5 p-6 animate-shimmer" style={{ animationDelay: `${i * 0.1}s` }}>
+                  <div key={i} className="bg-background-card rounded-xl border border-white/10 p-5">
                     <div className="flex gap-4">
-                      <Skeleton className="w-16 h-16 rounded-xl shrink-0" />
-                      <div className="flex-1 space-y-3">
+                      <Skeleton className="w-12 h-12 rounded-lg shrink-0" />
+                      <div className="flex-1 space-y-2">
                         <Skeleton className="h-5 w-3/4" />
                         <Skeleton className="h-4 w-1/2" />
+                        <Skeleton className="h-4 w-1/3" />
                       </div>
                       <Skeleton className="w-16 h-8 rounded-lg shrink-0" />
                     </div>
@@ -140,29 +128,26 @@ export default function HomePage() {
                 <p className="text-sm">请稍后再试</p>
               </div>
             ) : (
-              <div className="space-y-4">
-                {filteredArticles.map((article, index) => (
-                  <div
+              <div className="space-y-3 sm:space-y-4">
+                {filteredArticles.map((article) => (
+                  <ArticleCardCompact
                     key={article.id}
-                    className="animate-fade-in-up hover-lift"
-                    style={{ animationDelay: `${Math.min(index * 0.05, 0.5)}s` }}
-                  >
-                    <ArticleCardPH article={article} index={index} />
-                  </div>
+                    article={article}
+                  />
                 ))}
               </div>
             )}
           </div>
 
           {/* 右侧：侧边栏（平板及以上显示） */}
-          <div className="hidden md:block animate-fade-in-up stagger-2">
-            <SidebarNew articles={articles} />
+          <div className="hidden md:block">
+            <Sidebar articles={articles} />
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 mt-20 relative z-10 bg-white">
+      <footer className="border-t border-white/10 mt-20">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-text-muted text-sm">
           <p>数据来源: Hacker News, V2EX, GitHub Trending, AI Blogs, Dev.to, 36氪</p>
           <p className="mt-2">
@@ -171,7 +156,7 @@ export default function HomePage() {
               href="https://github.com/xxl115/ai-daily-collector"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-brand hover:text-brand-light transition-colors"
+              className="text-primary hover:underline"
             >
               AI Daily Collector
             </a>

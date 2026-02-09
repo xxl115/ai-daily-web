@@ -36,14 +36,14 @@ export function SourceFilter({ articles, selectedSource, onSelectSource }: Sourc
             className={cn(
               'px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all',
               isActive
-                ? 'bg-primary text-white'
-                : 'bg-background-card border border-white/10 text-text-secondary hover:bg-background-hover'
+                ? 'bg-brand text-white shadow-sm'
+                : 'bg-white border border-gray-300 text-text-secondary hover:bg-gray-50 hover:border-gray-400'
             )}
           >
             {source}
             <span className={cn(
               'ml-2 px-2 py-0.5 rounded-full text-xs',
-              isActive ? 'bg-white/20' : 'bg-white/10'
+              isActive ? 'bg-white/25' : 'bg-gray-200 text-gray-600'
             )}>
               {count}
             </span>
