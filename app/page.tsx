@@ -2,18 +2,23 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { SideNav } from '@/components/layout/SideNav';
+import { StatsPanel } from '@/components/layout/StatsPanel';
+import { TimeNav } from '@/components/layout/TimeNav';
 import { Article } from '@/lib/types';
 import { fetchArticles, getMockArticles } from '@/lib/api';
-import { StatsBar } from '@/components/layout/StatsBar';
 import { SearchBar } from '@/components/layout/SearchBar';
-import { SourceFilter } from '@/components/filters/SourceFilter';
-import { ArticleList } from '@/components/article/ArticleList';
+import { SourceFilterPills } from '@/components/filters/SourceFilterPills';
+import { ArticleListPH } from '@/components/article/ArticleListPH';
+
+type Period = 'today' | 'yesterday' | 'week' | 'month';
 
 export default function HomePage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSource, setSelectedSource] = useState('');
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [period, setPeriod] = useState<Period>('today');
 
   useEffect(() => {
     loadArticles();
@@ -45,7 +50,15 @@ export default function HomePage() {
     return matchSource && matchKeyword;
   });
 
-  const sourcesCount = new Set(articles.map(a => a.source)).size;
+  const sources = Array.from(new Set(articles.map(a => a.source)))
+    .map(name => ({ name, count: articles.filter(a => a.source === name).length }))
+    .sort((a, b) => b.count - a.count);
+
+  const hotArticlesList = articles
+    .filter(a => a.hotScore >= 100)
+    .sort((a, b) => b.hotScore - a.hotScore)
+    .slice(0, 5);
+
   const hotArticles = articles.filter(a => a.hotScore >= 100).length;
 
   return (
@@ -80,53 +93,36 @@ export default function HomePage() {
         </div>
       </header>
 
+      {/* Side Navigation */}
+      <SideNav sources={sources} hotArticles={hotArticlesList} />
+
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="ml-[240px] mr-[320px] px-6 py-8">
         {/* Search */}
         <div className="mb-6">
           <SearchBar onSearch={setSearchKeyword} />
         </div>
 
-        {/* Stats */}
-        <StatsBar
-          total={articles.length}
-          hot={hotArticles}
-          sources={sourcesCount}
-          lastUpdate={articles[0]?.publishedAt}
-        />
+        {/* Time Navigation */}
+        <TimeNav value={period} onChange={setPeriod} />
 
         {/* Filters */}
-        <SourceFilter
+        <SourceFilterPills
           articles={articles}
-          selectedSource={selectedSource || '全部'}
+          selectedSource={selectedSource}
           onSelectSource={setSelectedSource}
         />
 
-        {/* Articles */}
-        <ArticleList
+        {/* Articles - PH Style */}
+        <ArticleListPH
           articles={filteredArticles}
           loading={loading}
           onArticleClick={(article) => window.open(article.url, '_blank', 'noopener,noreferrer')}
         />
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-white/10 mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-text-muted text-sm">
-          <p>数据来源: Hacker News, V2EX, GitHub Trending, AI Blogs, Dev.to, 36氪</p>
-          <p className="mt-2">
-            Powered by{' '}
-            <a
-              href="https://github.com/xxl115/ai-daily-collector"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
-              AI Daily Collector
-            </a>
-          </p>
-        </div>
-      </footer>
+      {/* Stats Panel */}
+      <StatsPanel total={articles.length} hot={hotArticles} sources={sources.length} />
     </div>
   );
 }

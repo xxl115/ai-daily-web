@@ -3,9 +3,9 @@ import { ApiResponse, Article } from './types';
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://ai-daily-collector.xxl185.workers.dev';
 const HOTSPOTS_API = `${API_BASE}/api/hotspots`;
 
-export async function fetchArticles(limit: number = 100): Promise<Article[]> {
+export async function fetchArticles(limit: number = 100, period: 'today' | 'yesterday' | 'week' | 'month' = 'today'): Promise<Article[]> {
   try {
-    const response = await fetch(`${HOTSPOTS_API}?limit=${limit}`);
+    const response = await fetch(`${HOTSPOTS_API}?limit=${limit}&period=${period}`);
     const data: ApiResponse<Article[]> = await response.json();
 
     if (data.success && data.data) {
