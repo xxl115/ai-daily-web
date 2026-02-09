@@ -25,14 +25,14 @@ export function SourceFilterPills({ articles, selectedSource, onSelectSource }: 
   if (sources.length === 0) return null;
 
   return (
-    <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
+    <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
       <button
         onClick={() => onSelectSource(null)}
         className={cn(
-          'flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-medium transition-all',
+          'flex-shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-sm',
           selectedSource === null
-            ? 'bg-black text-white'
-            : 'text-gray-400 hover:text-gray-600'
+            ? 'bg-[#FF6B4A] text-white shadow-md'
+            : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
         )}
       >
         全部
@@ -42,10 +42,10 @@ export function SourceFilterPills({ articles, selectedSource, onSelectSource }: 
           key={name}
           onClick={() => onSelectSource(name === selectedSource ? null : name)}
           className={cn(
-            'flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-medium transition-all whitespace-nowrap',
+            'flex-shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap shadow-sm',
             selectedSource === name
-              ? 'bg-black text-white'
-              : 'text-gray-400 hover:text-gray-600'
+              ? 'bg-[#FF6B4A] text-white shadow-md'
+              : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
           )}
         >
           {name}

@@ -54,12 +54,17 @@ export default function HomePage() {
       <main className="flex-1 min-w-0 max-w-[760px]">
         <div className="px-6 py-8">
           {/* Period Title */}
-          <h2 className="text-xl font-bold text-gray-900 mb-6">
-            {period === 'today' ? '今日热门' : period === 'yesterday' ? '昨日热门' : period === 'week' ? '本周热门' : '上月热门'}
-          </h2>
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-gray-900">
+              {period === 'today' ? '今日热门' : period === 'yesterday' ? '昨日热门' : period === 'week' ? '本周热门' : '上月热门'}
+            </h1>
+            <p className="text-sm text-gray-500 mt-1">
+              发现最新的 AI 资讯和趋势
+            </p>
+          </div>
 
           {/* Search Bar */}
-          <div className="mb-6">
+          <div className="mb-5">
             <SearchBar onSearch={setSearchKeyword} />
           </div>
 

@@ -46,11 +46,11 @@ export const ArticleCardCompactPH = memo(function ArticleCardCompactPH({
   const encodedIcon = iconSvg ? encodeURIComponent(iconSvg) : null;
 
   return (
-    <div className="group bg-white border border-gray-200 rounded-lg p-2.5 gap-1.5 hover:shadow-sm hover:-translate-y-px transition-all duration-200">
-      <div className="flex gap-1.5">
+    <div className="group bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
+      <div className="flex gap-3">
         {/* Left: Source Icon - 32x32px */}
-        <div className="shrink-0 pt-0.5">
-          <div className="w-8 h-8 bg-white rounded-md overflow-hidden border border-gray-100 flex items-center justify-center">
+        <div className="shrink-0">
+          <div className="w-8 h-8 bg-white rounded-lg overflow-hidden border border-gray-100 flex items-center justify-center shadow-sm">
             {encodedIcon ? (
               <img
                 src={`data:image/svg+xml,${encodedIcon}`}
@@ -72,23 +72,23 @@ export const ArticleCardCompactPH = memo(function ArticleCardCompactPH({
             href={article.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="block text-base font-medium text-gray-900 leading-snug hover:text-brand-orange transition-colors line-clamp-2 mb-1"
+            className="block text-base font-semibold text-gray-900 leading-snug hover:text-[#FF6B4A] transition-colors line-clamp-2 mb-1"
           >
             {article.title}
           </a>
 
-          {/* Meta - 12px */}
+          {/* Meta - 13px */}
           <p className="text-xs text-gray-500">
             {article.source} · {new Date(article.publishedAt).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}
           </p>
         </div>
 
         {/* Right: Hot Score + 🔥 */}
-        <div className="shrink-0 flex flex-col items-end gap-0.5">
-          <div className="text-xl font-bold text-gray-900">
+        <div className="shrink-0 flex flex-col items-end gap-1">
+          <div className="text-2xl font-bold text-gray-900">
             {article.hotScore}
           </div>
-          <span className="text-sm">🔥</span>
+          <span className="text-base">🔥</span>
         </div>
       </div>
     </div>

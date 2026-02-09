@@ -13,21 +13,24 @@ interface ArticleListPHProps {
 export function ArticleListPH({ articles, loading, onAiClick }: ArticleListPHProps) {
   if (loading) {
     return (
-      <div className="py-4">
-        {Array.from({ length: 10 }).map((_, i) => (
-          <div key={i} className="flex items-stretch gap-3 py-3 border-b border-gray-100 -mx-4 px-4">
-            {/* Rank + Icon skeleton */}
-            <div className="flex items-center gap-3 flex-shrink-0 w-16">
-              <div className="w-4 h-4 bg-gray-200 rounded animate-pulse" />
-              <div className="w-12 h-12 bg-gray-200 rounded-lg animate-pulse" />
+      <div className="space-y-3">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+            <div className="flex gap-3">
+              {/* Icon skeleton */}
+              <div className="shrink-0">
+                <div className="w-8 h-8 bg-gray-200 rounded-lg animate-pulse" />
+              </div>
+              {/* Content skeleton */}
+              <div className="flex-1 min-w-0 space-y-2">
+                <div className="h-5 bg-gray-200 rounded w-3/4 animate-pulse" />
+                <div className="h-3 bg-gray-200 rounded w-1/3 animate-pulse" />
+              </div>
+              {/* Hot score skeleton */}
+              <div className="shrink-0 w-12 text-right">
+                <div className="h-7 bg-gray-200 rounded animate-pulse w-full" />
+              </div>
             </div>
-            {/* Content skeleton */}
-            <div className="flex-1 space-y-2 py-1">
-              <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
-              <div className="h-3 bg-gray-200 rounded w-1/3 animate-pulse" />
-            </div>
-            {/* Button skeleton */}
-            <div className="w-20 h-10 bg-gray-200 rounded-lg animate-pulse flex-shrink-0" />
           </div>
         ))}
       </div>
