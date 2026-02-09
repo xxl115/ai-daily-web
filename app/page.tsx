@@ -1,15 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { SideNav } from '@/components/layout/SideNav';
-import { StatsPanel } from '@/components/layout/StatsPanel';
 import { TimeNav } from '@/components/layout/TimeNav';
 import { Article } from '@/lib/types';
 import { fetchArticles, getMockArticles } from '@/lib/api';
 import { SearchBar } from '@/components/layout/SearchBar';
 import { SourceFilterPills } from '@/components/filters/SourceFilterPills';
 import { ArticleListPH } from '@/components/article/ArticleListPH';
+import { StatsPanel } from '@/components/layout/StatsPanel';
 
 type Period = 'today' | 'yesterday' | 'week' | 'month';
 
@@ -22,7 +21,7 @@ export default function HomePage() {
 
   useEffect(() => {
     loadArticles();
-  }, []);
+  }, [period]); // Reload when period changes
 
   const loadArticles = async () => {
     setLoading(true);
@@ -31,7 +30,6 @@ export default function HomePage() {
       if (data.length > 0) {
         setArticles(data);
       } else {
-        // Fallback to mock data
         setArticles(getMockArticles());
       }
     } catch (error) {
@@ -61,67 +59,56 @@ export default function HomePage() {
 
   const hotArticles = articles.filter(a => a.hotScore >= 100).length;
 
+  // Period labels
+  const periodLabels: Record<Period, string> = {
+    today: '今日热门',
+    yesterday: '昨日热门',
+    week: '本周热门',
+    month: '上月热门',
+  };
+
   return (
-    <div className="min-h-screen">
-      {/* Header */}
-      <header className="border-b border-gray-200 sticky top-0 bg-white/95 backdrop-blur z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-light rounded-xl flex items-center justify-center text-xl">
-                🤖
-              </div>
-              <h1 className="text-xl font-bold">AI Daily</h1>
-            </Link>
-            <nav className="flex gap-6 text-sm">
-              <Link href="/" className="text-text-primary font-medium">
-                首页
-              </Link>
-              <Link href="/timeline" className="text-text-secondary hover:text-text-primary transition-colors">
-                时间线
-              </Link>
-              <a
-                href="https://github.com/xxl115/ai-daily-collector"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-text-secondary hover:text-text-primary transition-colors"
-              >
-                GitHub
-              </a>
-            </nav>
+    <div className="min-h-screen bg-[#F9FAFB] flex">
+      {/* Left Sidebar - 240px */}
+      <SideNav sources={sources} hotArticles={hotArticlesList} currentPeriod={period} />
+
+      {/* Main Content - flexible width */}
+      <main className="flex-1 min-w-0">
+        <div className="max-w-[760px] mx-auto px-6 py-8">
+          {/* Search Bar - Full width */}
+          <div className="mb-6">
+            <SearchBar onSearch={setSearchKeyword} />
+          </div>
+
+          {/* Period Title */}
+          <h2 className="text-xl font-bold text-[#111827] mb-4">
+            {periodLabels[period]}
+          </h2>
+
+          {/* Time Navigation */}
+          <div className="mb-6">
+            <TimeNav value={period} onChange={setPeriod} />
+          </div>
+
+          {/* Source Filter Pills */}
+          <SourceFilterPills
+            articles={articles}
+            selectedSource={selectedSource}
+            onSelectSource={setSelectedSource}
+          />
+
+          {/* Articles List */}
+          <div className="mt-6">
+            <ArticleListPH
+              articles={filteredArticles}
+              loading={loading}
+              onArticleClick={(article) => window.open(article.url, '_blank', 'noopener,noreferrer')}
+            />
           </div>
         </div>
-      </header>
-
-      {/* Side Navigation */}
-      <SideNav sources={sources} hotArticles={hotArticlesList} />
-
-      {/* Main Content */}
-      <main className="ml-[240px] mr-[320px] px-6 py-8">
-        {/* Search */}
-        <div className="mb-6">
-          <SearchBar onSearch={setSearchKeyword} />
-        </div>
-
-        {/* Time Navigation */}
-        <TimeNav value={period} onChange={setPeriod} />
-
-        {/* Filters */}
-        <SourceFilterPills
-          articles={articles}
-          selectedSource={selectedSource}
-          onSelectSource={(source) => setSelectedSource(source)}
-        />
-
-        {/* Articles - PH Style */}
-        <ArticleListPH
-          articles={filteredArticles}
-          loading={loading}
-          onArticleClick={(article) => window.open(article.url, '_blank', 'noopener,noreferrer')}
-        />
       </main>
 
-      {/* Stats Panel */}
+      {/* Right Sidebar - 320px */}
       <StatsPanel total={articles.length} hot={hotArticles} sources={sources.length} />
     </div>
   );
