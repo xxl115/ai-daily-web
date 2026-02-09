@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Article } from '@/lib/types';
-import { getMockArticles } from '@/lib/api';
+import { useTimePeriodArticles } from '@/hooks/useTimePeriodArticles';
 import { SearchBar } from '@/components/layout/SearchBar';
 import { SourceFilterPills } from '@/components/filters/SourceFilterPills';
 import { ArticleListPH } from '@/components/article/ArticleListPH';
@@ -11,14 +11,33 @@ import { StatsPanel } from '@/components/layout/StatsPanel';
 
 type Period = 'today' | 'yesterday' | 'week' | 'month';
 
+function ErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-20 text-center">
+      <div className="text-5xl mb-4">⚠️</div>
+      <p className="text-lg font-medium text-gray-900 mb-1">加载失败</p>
+      <p className="text-sm text-gray-500 mb-4">{message}</p>
+      <button
+        onClick={onRetry}
+        className="px-6 py-2 bg-[#FF6B4A] text-white rounded-lg text-sm font-medium hover:bg-[#f55a3a] transition-colors"
+      >
+        重试
+      </button>
+    </div>
+  );
+}
+
 export default function HomePage() {
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [period, setPeriod] = useState<Period>('today');
+  const [retryKey, setRetryKey] = useState(0);
 
-  // Use mock data for now
-  const articles = getMockArticles();
-  const loading = false;
+  // Fetch articles from real API
+  const { data, isLoading, error, refetch } = useTimePeriodArticles(period);
+
+  const articles = data?.data ?? [];
+  const loading = isLoading;
 
   const filteredArticles = articles.filter(article => {
     const matchSource = !selectedSource || article.source === selectedSource;
@@ -39,6 +58,34 @@ export default function HomePage() {
     .slice(0, 5);
 
   const hotCount = articles.filter(a => a.hotScore >= 100).length;
+
+  const handleRetry = () => {
+    setRetryKey(prev => prev + 1);
+    refetch();
+  };
+
+  // Show error state
+  if (error && !loading) {
+    return (
+      <div className="min-h-screen bg-[#F9FAFB] flex">
+        <SideNav
+          sources={[]}
+          hotArticles={[]}
+          currentPeriod={period}
+          onPeriodChange={setPeriod}
+        />
+        <main className="flex-1 min-w-0 max-w-[760px]">
+          <div className="px-6 py-8">
+            <ErrorState
+              message={error instanceof Error ? error.message : '无法获取数据，请稍后再试'}
+              onRetry={handleRetry}
+            />
+          </div>
+        </main>
+        <StatsPanel total={0} hot={0} sources={0} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F9FAFB] flex">
@@ -81,6 +128,7 @@ export default function HomePage() {
           <ArticleListPH
             articles={filteredArticles}
             loading={loading}
+            key={`${period}-${retryKey}`}
           />
         </div>
       </main>
