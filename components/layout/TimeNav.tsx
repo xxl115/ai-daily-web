@@ -18,16 +18,16 @@ const periods: { value: Period; label: string }[] = [
 
 export function TimeNav({ value, onChange }: TimeNavProps) {
   return (
-    <div className="flex gap-1.5">
+    <div className="flex gap-1">
       {periods.map((period) => (
         <button
           key={period.value}
           onClick={() => onChange(period.value)}
           className={cn(
-            'px-3 py-1.5 rounded-full text-sm font-medium transition-all',
+            'px-3 py-1.5 rounded-lg text-xs font-medium transition-all',
             value === period.value
               ? 'bg-black text-white'
-              : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+              : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
           )}
         >
           {period.label}

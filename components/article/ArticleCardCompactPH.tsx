@@ -6,12 +6,8 @@ import { memo } from 'react';
 
 interface ArticleCardCompactPHProps {
   article: Article;
-  index?: number;
-  onAiClick?: (article: Article) => void;
-  onClick?: () => void;
 }
 
-// Map source names to simple-icons slugs
 const sourceIconMap: Record<string, string> = {
   'Hacker News': 'ycombinator',
   'GitHub': 'github',
@@ -45,74 +41,55 @@ function getSourceIcon(source: string): string | null {
 
 export const ArticleCardCompactPH = memo(function ArticleCardCompactPH({
   article,
-  index = 0,
-  onAiClick,
 }: ArticleCardCompactPHProps) {
   const iconSvg = getSourceIcon(article.source);
   const encodedIcon = iconSvg ? encodeURIComponent(iconSvg) : null;
 
-  const handleCardClick = () => {
-    window.open(article.url, '_blank', 'noopener,noreferrer');
-  };
-
   return (
-    <div
-      className="group flex items-start gap-3 py-3 px-4 hover:bg-gray-50 transition-colors cursor-pointer"
-      onClick={handleCardClick}
-    >
-      {/* Left: Rank + Icon */}
-      <div className="flex items-center gap-3 flex-shrink-0">
-        {/* Rank Number - subtle */}
-        <span className="text-xs font-medium text-gray-300 w-4 text-center">
-          {index + 1}
-        </span>
-
-        {/* Product Icon - 48x48 rounded */}
-        <div className="w-12 h-12 flex-shrink-0 bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm flex items-center justify-center">
-          {encodedIcon ? (
-            <img
-              src={`data:image/svg+xml,${encodedIcon}`}
-              alt={article.source}
-              className="w-8 h-8"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-500 to-pink-500 text-white text-xs font-bold">
-              {article.source.slice(0, 2)}
-            </div>
-          )}
+    <div className="group bg-white border border-gray-200 rounded-lg p-2.5 gap-1.5 hover:shadow-sm hover:-translate-y-px transition-all duration-200">
+      <div className="flex gap-1.5">
+        {/* Left: Source Icon - 32x32px */}
+        <div className="shrink-0 pt-0.5">
+          <div className="w-8 h-8 bg-white rounded-md overflow-hidden border border-gray-100 flex items-center justify-center">
+            {encodedIcon ? (
+              <img
+                src={`data:image/svg+xml,${encodedIcon}`}
+                alt={article.source}
+                className="w-6 h-6"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-500 to-pink-500 text-white text-[10px] font-bold">
+                {article.source.slice(0, 2)}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Middle: Content */}
-      <div className="flex-1 min-w-0 pt-1">
-        {/* Title */}
-        <h3 className="text-[15px] font-semibold text-gray-900 leading-snug mb-1 group-hover:text-orange-600 transition-colors">
-          {article.title}
-        </h3>
+        {/* Middle: Content */}
+        <div className="flex-1 min-w-0">
+          {/* Title - 16px */}
+          <a
+            href={article.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-base font-medium text-gray-900 leading-snug hover:text-brand-orange transition-colors line-clamp-2 mb-1"
+          >
+            {article.title}
+          </a>
 
-        {/* Tags */}
-        <div className="flex items-center gap-2 text-[13px] text-gray-400">
-          <span className="hover:text-gray-600 transition-colors">{article.source}</span>
+          {/* Meta - 12px */}
+          <p className="text-xs text-gray-500">
+            {article.source} · {new Date(article.publishedAt).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}
+          </p>
         </div>
-      </div>
 
-      {/* Right: Upvote Button - Product Hunt style */}
-      <div className="flex-shrink-0 pt-1">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-          className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all"
-        >
-          {/* Up Arrow Icon */}
-          <svg className="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M12 19V5M5 12l7-7 7 7" />
-          </svg>
-          {/* Vote Count */}
-          <span className="text-sm font-semibold text-gray-500">
+        {/* Right: Hot Score + 🔥 */}
+        <div className="shrink-0 flex flex-col items-end gap-0.5">
+          <div className="text-xl font-bold text-gray-900">
             {article.hotScore}
-          </span>
-        </button>
+          </div>
+          <span className="text-sm">🔥</span>
+        </div>
       </div>
     </div>
   );

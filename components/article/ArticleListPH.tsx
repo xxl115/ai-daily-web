@@ -45,13 +45,11 @@ export function ArticleListPH({ articles, loading, onAiClick }: ArticleListPHPro
   }
 
   return (
-    <div>
-      {articles.map((article, index) => (
+    <div className="space-y-3">
+      {articles.map((article) => (
         <ArticleCardCompactPH
           key={article.id}
           article={article}
-          index={index}
-          onAiClick={onAiClick}
         />
       ))}
     </div>

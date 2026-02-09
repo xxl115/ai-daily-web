@@ -25,11 +25,11 @@ export function SourceFilterPills({ articles, selectedSource, onSelectSource }: 
   if (sources.length === 0) return null;
 
   return (
-    <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+    <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
       <button
         onClick={() => onSelectSource(null)}
         className={cn(
-          'flex-shrink-0 px-3 py-1 rounded-full text-sm font-medium transition-all',
+          'flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-medium transition-all',
           selectedSource === null
             ? 'bg-black text-white'
             : 'text-gray-400 hover:text-gray-600'
@@ -42,7 +42,7 @@ export function SourceFilterPills({ articles, selectedSource, onSelectSource }: 
           key={name}
           onClick={() => onSelectSource(name === selectedSource ? null : name)}
           className={cn(
-            'flex-shrink-0 px-3 py-1 rounded-full text-sm font-medium transition-all whitespace-nowrap',
+            'flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-medium transition-all whitespace-nowrap',
             selectedSource === name
               ? 'bg-black text-white'
               : 'text-gray-400 hover:text-gray-600'
