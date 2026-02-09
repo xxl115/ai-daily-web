@@ -61,7 +61,7 @@ export default function ArticleDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen">
-        <header className="border-b border-white/10">
+        <header className="border-b border-gray-200">
           <div className="max-w-4xl mx-auto px-4 py-4">
             <Link href="/" className="text-text-secondary hover:text-text-primary">
               ← 返回
@@ -95,7 +95,7 @@ export default function ArticleDetailPage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-white/10 sticky top-0 bg-background-primary/95 backdrop-blur z-50">
+      <header className="border-b border-gray-200 sticky top-0 bg-white/95 backdrop-blur z-50">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link
             href="/"
@@ -106,7 +106,7 @@ export default function ArticleDetailPage() {
           <div className="flex gap-2">
             <button
               onClick={() => navigator.clipboard.writeText(article.url)}
-              className="px-4 py-2 bg-background-card border border-white/10 rounded-lg text-sm hover:bg-background-hover transition-colors"
+              className="px-4 py-2 bg-background-card border border-gray-200 rounded-lg text-sm hover:bg-background-hover transition-colors"
             >
               📋 复制链接
             </button>
@@ -141,7 +141,7 @@ export default function ArticleDetailPage() {
         </div>
 
         {/* AI Summary Section */}
-        <div className="bg-background-card rounded-xl border border-white/10 p-6 mb-8">
+        <div className="bg-background-card rounded-xl border border-gray-200 p-6 mb-8">
           <div className="flex items-center gap-2 mb-4">
             <span className="text-lg">🤖</span>
             <span className="font-semibold">AI 摘要</span>
@@ -180,7 +180,7 @@ export default function ArticleDetailPage() {
 
         {/* Related Articles */}
         {article.related && article.related.length > 0 && (
-          <div className="bg-background-card rounded-xl border border-white/10 p-6">
+          <div className="bg-background-card rounded-xl border border-gray-200 p-6">
             <div className="flex items-center gap-2 mb-4">
               <span className="text-lg">🔗</span>
               <span className="font-semibold">相关文章</span>
@@ -190,7 +190,7 @@ export default function ArticleDetailPage() {
                 <div
                   key={related.id}
                   onClick={() => router.push(`/article/${related.id}`)}
-                  className="p-4 bg-background-hover rounded-lg border border-white/10 hover:border-primary/50 cursor-pointer transition-all"
+                  className="p-4 bg-background-hover rounded-lg border border-gray-200 hover:border-primary/50 cursor-pointer transition-all"
                 >
                   <div className="text-sm text-text-muted mb-1">
                     {related.source} · {timeAgo(related.publishedAt)}

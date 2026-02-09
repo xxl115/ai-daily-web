@@ -16,7 +16,7 @@ type Period = 'today' | 'yesterday' | 'week' | 'month';
 export default function HomePage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedSource, setSelectedSource] = useState('');
+  const [selectedSource, setSelectedSource] = useState<string | null>(null);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [period, setPeriod] = useState<Period>('today');
 
@@ -64,7 +64,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-white/10 sticky top-0 bg-background-primary/95 backdrop-blur z-50">
+      <header className="border-b border-gray-200 sticky top-0 bg-white/95 backdrop-blur z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3">
@@ -110,7 +110,7 @@ export default function HomePage() {
         <SourceFilterPills
           articles={articles}
           selectedSource={selectedSource}
-          onSelectSource={setSelectedSource}
+          onSelectSource={(source) => setSelectedSource(source)}
         />
 
         {/* Articles - PH Style */}

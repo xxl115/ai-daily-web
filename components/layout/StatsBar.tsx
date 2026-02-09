@@ -14,7 +14,7 @@ export function StatsBar({ total = 0, hot = 0, sources = 0, lastUpdate }: StatsB
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-      <div className="bg-background-card rounded-xl p-6 border border-white/10 hover:bg-background-hover transition-colors">
+      <div className="bg-background-card rounded-xl p-6 border border-gray-200 hover:bg-background-hover transition-colors">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center text-lg">
             📊
@@ -24,7 +24,7 @@ export function StatsBar({ total = 0, hot = 0, sources = 0, lastUpdate }: StatsB
         <div className="text-3xl font-bold">{total || '-'}</div>
       </div>
 
-      <div className="bg-background-card rounded-xl p-6 border border-white/10 hover:bg-background-hover transition-colors">
+      <div className="bg-background-card rounded-xl p-6 border border-gray-200 hover:bg-background-hover transition-colors">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center text-lg">
             🔥
@@ -34,7 +34,7 @@ export function StatsBar({ total = 0, hot = 0, sources = 0, lastUpdate }: StatsB
         <div className="text-3xl font-bold">{hot || '-'}</div>
       </div>
 
-      <div className="bg-background-card rounded-xl p-6 border border-white/10 hover:bg-background-hover transition-colors">
+      <div className="bg-background-card rounded-xl p-6 border border-gray-200 hover:bg-background-hover transition-colors">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center text-lg">
             📁
@@ -44,7 +44,7 @@ export function StatsBar({ total = 0, hot = 0, sources = 0, lastUpdate }: StatsB
         <div className="text-3xl font-bold">{sources || '-'}</div>
       </div>
 
-      <div className="bg-background-card rounded-xl p-6 border border-white/10 hover:bg-background-hover transition-colors">
+      <div className="bg-background-card rounded-xl p-6 border border-gray-200 hover:bg-background-hover transition-colors">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center text-lg">
             ⏰

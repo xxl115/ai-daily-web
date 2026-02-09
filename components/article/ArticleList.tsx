@@ -15,7 +15,7 @@ export function ArticleList({ articles, loading, onArticleClick }: ArticleListPr
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="bg-background-card rounded-xl border border-white/10 p-6 space-y-4">
+          <div key={i} className="bg-background-card rounded-xl border border-gray-200 p-6 space-y-4">
             <Skeleton className="h-4 w-20" />
             <Skeleton className="h-6 w-full" />
             <Skeleton className="h-4 w-1/2" />

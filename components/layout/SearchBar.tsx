@@ -24,7 +24,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
         placeholder="搜索文章标题、来源..."
-        className="w-full pl-12 pr-4 py-3 bg-background-card border border-white/10 rounded-xl text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+        className="w-full pl-12 pr-4 py-3 bg-background-card border border-gray-200 rounded-xl text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
       />
     </form>
   );

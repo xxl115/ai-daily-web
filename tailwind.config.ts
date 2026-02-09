@@ -11,20 +11,20 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#6366f1',
-          light: '#818cf8',
-          dark: '#4f46e5',
+          DEFAULT: '#FF6B4A',
+          light: '#FF8A6B',
+          dark: '#E55A3A',
         },
         background: {
-          primary: '#0f0f23',
-          secondary: '#1a1a2e',
-          card: '#252542',
-          hover: '#2d2d4a',
+          primary: '#F9FAFB',
+          secondary: '#FFFFFF',
+          card: '#FFFFFF',
+          hover: '#F3F4F6',
         },
         text: {
-          primary: '#ffffff',
-          secondary: '#a0a0b8',
-          muted: '#6b6b80',
+          primary: '#111827',
+          secondary: '#6B7280',
+          muted: '#9CA3AF',
         },
         success: '#10b981',
         warning: '#f59e0b',

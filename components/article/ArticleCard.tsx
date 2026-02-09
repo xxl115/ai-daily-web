@@ -25,7 +25,7 @@ export function ArticleCard({ article, index, onClick }: ArticleCardProps) {
   return (
     <div
       onClick={onClick}
-      className="group bg-background-card rounded-xl border border-white/10 p-6 transition-all duration-300 hover:shadow-lg hover:border-primary/50 cursor-pointer"
+      className="group bg-background-card rounded-xl border border-gray-200 p-6 transition-all duration-300 hover:shadow-lg hover:border-primary/50 cursor-pointer"
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
@@ -55,7 +55,7 @@ export function ArticleCard({ article, index, onClick }: ArticleCardProps) {
         </span>
         <button
           onClick={handleCopy}
-          className="px-3 py-1 rounded-lg bg-background-hover hover:bg-background-card border border-white/10 text-xs transition-colors"
+          className="px-3 py-1 rounded-lg bg-background-hover hover:bg-background-card border border-gray-200 text-xs transition-colors"
         >
           {copied ? '✓ 已复制' : '📋 复制'}
         </button>
