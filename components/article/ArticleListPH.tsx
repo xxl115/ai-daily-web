@@ -1,7 +1,7 @@
 'use client';
 
 import { Article } from '@/lib/types';
-import { ArticleCardCompactPH } from './ArticleCardCompactPH';
+import { ProductCard } from './ProductCard';
 import { Skeleton } from '../ui/Skeleton';
 
 interface ArticleListPHProps {
@@ -14,16 +14,17 @@ interface ArticleListPHProps {
 export function ArticleListPH({ articles, loading, onArticleClick, onAiClick }: ArticleListPHProps) {
   if (loading) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-4">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="bg-white rounded-[6px] border border-gray-200 p-[10px]">
-            <div className="flex items-center gap-3">
-              <Skeleton className="w-8 h-8 rounded-md" />
-              <div className="flex-1 space-y-2">
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-3 w-1/2" />
+          <div key={i} className="product-card p-5">
+            <div className="flex items-start gap-4">
+              <Skeleton className="w-[60px] h-[60px] rounded-[12px]" />
+              <div className="flex-1 space-y-3">
+                <Skeleton className="h-5 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-6 w-24" />
               </div>
-              <Skeleton className="h-6 w-16" />
+              <Skeleton className="w-12 h-12" />
             </div>
           </div>
         ))}
@@ -33,22 +34,23 @@ export function ArticleListPH({ articles, loading, onArticleClick, onAiClick }: 
 
   if (articles.length === 0) {
     return (
-      <div className="text-center py-20 text-gray-500">
+      <div className="text-center py-20">
         <div className="text-6xl mb-4">📭</div>
-        <p className="text-xl mb-2">暂无文章</p>
-        <p className="text-sm">请稍后再试</p>
+        <p className="text-xl mb-2 text-[#21293C]">暂无文章</p>
+        <p className="text-sm text-[#718096]">请稍后再试</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      {articles.map((article) => (
-        <ArticleCardCompactPH
+    <div className="space-y-4">
+      {articles.map((article, index) => (
+        <ProductCard
           key={article.id}
           article={article}
-          onAiClick={onAiClick}
+          rank={index + 1}
           onClick={() => onArticleClick?.(article)}
+          onAiClick={onAiClick}
         />
       ))}
     </div>

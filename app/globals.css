@@ -9,22 +9,24 @@
 }
 
 :root {
-  /* Brand Color */
-  --brand: #FF6B4A;
-
+  /* Product Hunt Brand Color */
+  --ph-primary: #FF6154;
+  --ph-coral: #FF6154;
+  
   /* Background Colors */
-  --bg-page: #F9FAFB;
+  --bg-page: #F5F5F5;
   --bg-card: #FFFFFF;
   --bg-hover: #F3F4F6;
-
-  /* Text Colors */
-  --text-primary: #111827;
-  --text-secondary: #6B7280;
-  --text-muted: #9CA3AF;
-
+  
+  /* Text Colors - Product Hunt Style */
+  --text-primary: #21293C;
+  --text-secondary: #4A5568;
+  --text-muted: #718096;
+  
   /* Border */
-  --border: #E5E7EB;
-
+  --border: #e0e0e0;
+  --border-light: #E5E7EB;
+  
   /* Source Colors */
   --source-hn: #FF6600;
   --source-github: #24292E;
@@ -33,7 +35,7 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background: var(--bg-page);
   color: var(--text-primary);
   min-height: 100vh;
@@ -62,4 +64,109 @@ html {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #9CA3AF;
+}
+
+/* Product Hunt Card Styles */
+.product-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* Search Bar - Product Hunt Style */
+.search-bar-ph {
+  background: #F5F5F5;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.search-bar-ph:focus-within {
+  background: #FFFFFF;
+  border-color: var(--ph-primary);
+  box-shadow: 0 0 0 3px rgba(255, 97, 84, 0.1);
+}
+
+/* Primary Button - Product Hunt Style */
+.btn-primary-ph {
+  background: var(--ph-primary);
+  color: #FFFFFF;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary-ph:hover {
+  background: #E55548;
+  transform: translateY(-1px);
+}
+
+/* Vote Button - Product Hunt Style */
+.vote-button {
+  color: var(--ph-primary);
+  transition: transform 0.2s ease;
+}
+
+.vote-button:hover {
+  transform: scale(1.1);
+}
+
+/* Tag Style */
+.tag-ph {
+  background: #EDF2F7;
+  color: var(--text-secondary);
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Section Title */
+.section-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+/* Layout utilities */
+.container-ph {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Header height */
+.header-ph {
+  height: 72px;
+}
+
+/* Sidebar width */
+.sidebar-ph {
+  width: 320px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease forwards;
 }

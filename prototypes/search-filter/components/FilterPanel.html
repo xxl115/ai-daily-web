@@ -1,0 +1,536 @@
+<!--
+  FilterPanel 组件原型
+  对应后续 React 组件: components/filters/FilterPanel.tsx
+  
+  功能:
+  - 时间范围筛选
+  - 来源筛选
+  - 排序方式选择
+  - 标签筛选
+  - 筛选条件应用/清除
+  
+  设计特点:
+  - 可展开/收起的面板
+  - 响应式布局 (单列移动端, 四列桌面端)
+  - 渐进式披露
+-->
+<div id="filterPanel" class="filter-panel-enter bg-white border-b border-gray-200 overflow-hidden">
+    <div class="max-w-6xl mx-auto px-4 py-6">
+        <!-- 筛选条件网格 -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            
+            <!-- 1. 时间范围筛选 -->
+            <div class="filter-group">
+                <h3 class="filter-group-title">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    时间范围
+                </h3>
+                <div class="space-y-2">
+                    <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition-colors">
+                        <input 
+                            type="radio" 
+                            name="timeFilter" 
+                            value="today" 
+                            class="accent-primary w-4 h-4"
+                            checked
+                        >
+                        <span class="text-sm text-gray-700">今日</span>
+                        <span class="ml-auto text-xs text-gray-400">24小时内</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition-colors">
+                        <input 
+                            type="radio" 
+                            name="timeFilter" 
+                            value="yesterday" 
+                            class="accent-primary w-4 h-4"
+                        >
+                        <span class="text-sm text-gray-700">昨日</span>
+                        <span class="ml-auto text-xs text-gray-400">昨天</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition-colors">
+                        <input 
+                            type="radio" 
+                            name="timeFilter" 
+                            value="week" 
+                            class="accent-primary w-4 h-4"
+                        >
+                        <span class="text-sm text-gray-700">本周</span>
+                        <span class="ml-auto text-xs text-gray-400">7天内</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition-colors">
+                        <input 
+                            type="radio" 
+                            name="timeFilter" 
+                            value="month" 
+                            class="accent-primary w-4 h-4"
+                        >
+                        <span class="text-sm text-gray-700">本月</span>
+                        <span class="ml-auto text-xs text-gray-400">30天内</span>
+                    </label>
+                    <!-- 自定义时间选项 -->
+                    <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition-colors">
+                        <input 
+                            type="radio" 
+                            name="timeFilter" 
+                            value="custom" 
+                            class="accent-primary w-4 h-4"
+                        >
+                        <span class="text-sm text-gray-700">自定义</span>
+                        <svg class="w-4 h-4 text-gray-400 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- 2. 来源筛选 -->
+            <div class="filter-group">
+                <h3 class="filter-group-title">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                    </svg>
+                    新闻来源
+                </h3>
+                <!-- 下拉选择 (单选) -->
+                <div class="relative mb-3">
+                    <select 
+                        id="sourceSelect" 
+                        class="select-input appearance-none cursor-pointer"
+                    >
+                        <option value="">全部来源</option>
+                        <option value="openai">OpenAI</option>
+                        <option value="google">Google AI</option>
+                        <option value="anthropic">Anthropic</option>
+                        <option value="mit">MIT Tech Review</option>
+                        <option value="wired">Wired</option>
+                        <option value="verge">The Verge</option>
+                        <option value="techcrunch">TechCrunch</option>
+                        <option value="producthunt">Product Hunt</option>
+                    </select>
+                    <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </div>
+                
+                <!-- 快速多选标签 -->
+                <div class="flex flex-wrap gap-1.5">
+                    <label class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-full text-xs text-gray-600 cursor-pointer hover:bg-gray-200 transition-colors has-[:checked]:bg-primary has-[:checked]:text-white">
+                        <input type="checkbox" class="hidden" id="src-openai" checked>
+                        <span>OpenAI</span>
+                    </label>
+                    <label class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-full text-xs text-gray-600 cursor-pointer hover:bg-gray-200 transition-colors has-[:checked]:bg-primary has-[:checked]:text-white">
+                        <input type="checkbox" class="hidden" id="src-google">
+                        <span>Google</span>
+                    </label>
+                    <label class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-full text-xs text-gray-600 cursor-pointer hover:bg-gray-200 transition-colors has-[:checked]:bg-primary has-[:checked]:text-white">
+                        <input type="checkbox" class="hidden" id="src-anthropic">
+                        <span>Anthropic</span>
+                    </label>
+                    <label class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-full text-xs text-gray-600 cursor-pointer hover:bg-gray-200 transition-colors has-[:checked]:bg-primary has-[:checked]:text-white">
+                        <input type="checkbox" class="hidden" id="src-mit">
+                        <span>MIT</span>
+                    </label>
+                    <label class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-full text-xs text-gray-600 cursor-pointer hover:bg-gray-200 transition-colors has-[:checked]:bg-primary has-[:checked]:text-white">
+                        <input type="checkbox" class="hidden" id="src-wired">
+                        <span>Wired</span>
+                    </label>
+                    <button class="px-2 py-1 text-xs text-primary hover:bg-primary/10 rounded-full transition-colors">
+                        + 更多
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 3. 排序方式 -->
+            <div class="filter-group">
+                <h3 class="filter-group-title">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/>
+                    </svg>
+                    排序方式
+                </h3>
+                <div class="relative">
+                    <select 
+                        id="sortSelect" 
+                        class="select-input appearance-none cursor-pointer"
+                    >
+                        <option value="hot">🔥 热度优先</option>
+                        <option value="newest">🕐 最新发布</option>
+                        <option value="relevant">📊 相关性</option>
+                        <option value="comments">💬 评论最多</option>
+                        <option value="controversial">⚡ 争议性</option>
+                    </select>
+                    <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </div>
+                
+                <!-- 排序说明 -->
+                <p class="mt-2 text-xs text-gray-500">
+                    <span id="sortDescription">按热度排序，显示最受欢迎的内容</span>
+                </p>
+            </div>
+            
+            <!-- 4. 操作按钮 -->
+            <div class="filter-group">
+                <h3 class="filter-group-title">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                    </svg>
+                    操作
+                </h3>
+                <div class="space-y-2">
+                    <button 
+                        onclick="applyFilters()" 
+                        class="btn-primary w-full flex items-center justify-center gap-2"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        应用筛选
+                    </button>
+                    <button 
+                        onclick="clearFilters()" 
+                        class="btn-secondary w-full flex items-center justify-center gap-2"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                        清除全部
+                    </button>
+                    <button 
+                        onclick="saveFilterPreset()" 
+                        class="btn-text w-full flex items-center justify-center gap-2"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                        </svg>
+                        保存为预设
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 5. 标签筛选 (跨列) -->
+        <div class="mt-6 pt-6 border-t border-gray-100">
+            <h3 class="filter-group-title mb-3">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                </svg>
+                热门标签
+            </h3>
+            <div class="flex flex-wrap gap-2">
+                <!-- 可选标签 -->
+                <button class="filter-tag" data-tag="LLM">LLM</button>
+                <button class="filter-tag" data-tag="GPT-4">GPT-4</button>
+                <button class="filter-tag" data-tag="AI绘画">AI绘画</button>
+                <button class="filter-tag" data-tag="Claude">Claude</button>
+                <button class="filter-tag" data-tag="开源">开源</button>
+                <button class="filter-tag" data-tag="产品发布">产品发布</button>
+                <button class="filter-tag" data-tag="研究论文">研究论文</button>
+                <button class="filter-tag" data-tag="工具评测">工具评测</button>
+                <button class="filter-tag" data-tag="行业动态">行业动态</button>
+                <button class="filter-tag" data-tag="政策法规">政策法规</button>
+                <button class="filter-tag" data-tag="投融资">投融资</button>
+                <button class="filter-tag" data-tag="人才流动">人才流动</button>
+                
+                <!-- 自定义标签按钮 -->
+                <button class="filter-tag bg-primary text-white hover:bg-red-600" onclick="showCustomTagDialog()">
+                    + 自定义
+                </button>
+            </div>
+        </div>
+        
+        <!-- 6. 已选筛选条件摘要 -->
+        <div id="filterSummary" class="mt-4 p-4 bg-gray-50 rounded-xl hidden">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-gray-600">当前筛选:</span>
+                    <div id="activeFilterTags" class="flex flex-wrap gap-2">
+                        <!-- JS 动态生成 -->
+                    </div>
+                </div>
+                <button onclick="clearFilters()" class="text-sm text-primary hover:underline">
+                    清除全部
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--
+  FilterPanel 交互逻辑 (JavaScript)
+-->
+<script>
+    /**
+     * FilterPanel 组件
+     */
+    const FilterPanel = {
+        // 状态
+        isExpanded: false,
+        filters: {
+            time: 'today',
+            source: '',
+            sources: [],
+            sort: 'hot',
+            tags: []
+        },
+        
+        // DOM 元素
+        elements: {
+            panel: document.getElementById('filterPanel'),
+            summary: document.getElementById('filterSummary'),
+            activeTags: document.getElementById('activeFilterTags'),
+            sortSelect: document.getElementById('sortSelect'),
+            sortDesc: document.getElementById('sortDescription')
+        },
+        
+        // 排序说明映射
+        sortDescriptions: {
+            hot: '按热度排序，显示最受欢迎的内容',
+            newest: '按发布时间排序，最新内容优先',
+            relevant: '按相关性排序，与搜索词匹配度最高',
+            comments: '按评论数量排序，讨论最热烈',
+            controversial: '按争议性排序，观点分歧最大'
+        },
+        
+        /**
+         * 初始化
+         */
+        init() {
+            this.bindEvents();
+            this.updateSortDescription();
+        },
+        
+        /**
+         * 绑定事件
+         */
+        bindEvents() {
+            const { sortSelect } = this.elements;
+            
+            // 排序选择变化
+            sortSelect.addEventListener('change', (e) => {
+                this.filters.sort = e.target.value;
+                this.updateSortDescription();
+                this.applyFilters();
+            });
+            
+            // 标签点击
+            document.querySelectorAll('.filter-tag[data-tag]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const tag = e.target.dataset.tag;
+                    this.toggleTag(tag);
+                });
+            });
+            
+            // 来源复选框
+            document.querySelectorAll('[id^="src-"]').forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    this.updateSources();
+                });
+            });
+        },
+        
+        /**
+         * 展开/收起面板
+         */
+        toggle() {
+            this.isExpanded = !this.isExpanded;
+            
+            if (this.isExpanded) {
+                this.elements.panel.classList.remove('filter-panel-enter');
+                this.elements.panel.classList.add('filter-panel-enter-active');
+            } else {
+                this.elements.panel.classList.remove('filter-panel-enter-active');
+                this.elements.panel.classList.add('filter-panel-enter');
+            }
+            
+            return this.isExpanded;
+        },
+        
+        /**
+         * 展开面板
+         */
+        expand() {
+            if (!this.isExpanded) {
+                this.toggle();
+            }
+        },
+        
+        /**
+         * 收起面板
+         */
+        collapse() {
+            if (this.isExpanded) {
+                this.toggle();
+            }
+        },
+        
+        /**
+         * 切换标签
+         * @param {string} tag - 标签名称
+         */
+        toggleTag(tag) {
+            const index = this.filters.tags.indexOf(tag);
+            
+            if (index > -1) {
+                // 移除标签
+                this.filters.tags.splice(index, 1);
+            } else {
+                // 添加标签
+                this.filters.tags.push(tag);
+            }
+            
+            this.updateTagStyles();
+            this.updateFilterSummary();
+        },
+        
+        /**
+         * 更新标签样式
+         */
+        updateTagStyles() {
+            document.querySelectorAll('.filter-tag[data-tag]').forEach(btn => {
+                const tag = btn.dataset.tag;
+                const isActive = this.filters.tags.includes(tag);
+                
+                btn.classList.toggle('bg-primary', isActive);
+                btn.classList.toggle('text-white', isActive);
+                btn.classList.toggle('hover:bg-red-600', isActive);
+            });
+        },
+        
+        /**
+         * 更新来源
+         */
+        updateSources() {
+            this.filters.sources = [];
+            
+            document.querySelectorAll('[id^="src-"]:checked').forEach(checkbox => {
+                this.filters.sources.push(checkbox.id.replace('src-', ''));
+            });
+            
+            this.updateFilterSummary();
+        },
+        
+        /**
+         * 更新排序说明
+         */
+        updateSortDescription() {
+            const { sortDesc } = this.elements;
+            sortDesc.textContent = this.sortDescriptions[this.filters.sort] || '';
+        },
+        
+        /**
+         * 更新筛选摘要
+         */
+        updateFilterSummary() {
+            const { summary, activeTags } = this.elements;
+            const hasFilters = this.filters.sources.length > 0 || this.filters.tags.length > 0;
+            
+            // 显示/隐藏摘要
+            summary.classList.toggle('hidden', !hasFilters);
+            
+            // 生成标签
+            const tags = [
+                ...this.filters.sources.map(s => ({ type: 'source', text: s })),
+                ...this.filters.tags.map(t => ({ type: 'tag', text: t }))
+            ];
+            
+            activeTags.innerHTML = tags.map(tag => `
+                <span class="inline-flex items-center gap-1 px-2 py-1 bg-white border border-gray-200 rounded-full text-xs">
+                    <span>${tag.text}</span>
+                    <button onclick="FilterPanel.removeFilter('${tag.type}', '${tag.text}')" class="text-gray-400 hover:text-red-500">
+                        ×
+                    </button>
+                </span>
+            `).join('');
+        },
+        
+        /**
+         * 移除筛选条件
+         * @param {string} type - 筛选类型
+         * @param {string} value - 筛选值
+         */
+        removeFilter(type, value) {
+            if (type === 'source') {
+                const index = this.filters.sources.indexOf(value);
+                if (index > -1) {
+                    this.filters.sources.splice(index, 1);
+                    const checkbox = document.getElementById(`src-${value}`);
+                    if (checkbox) checkbox.checked = false;
+                }
+            } else if (type === 'tag') {
+                const index = this.filters.tags.indexOf(value);
+                if (index > -1) {
+                    this.filters.tags.splice(index, 1);
+                }
+            }
+            
+            this.updateTagStyles();
+            this.updateFilterSummary();
+        },
+        
+        /**
+         * 应用筛选
+         */
+        applyFilters() {
+            // 获取时间筛选
+            const timeRadio = document.querySelector('input[name="timeFilter"]:checked');
+            if (timeRadio) {
+                this.filters.time = timeRadio.value;
+            }
+            
+            // 获取来源
+            this.filters.source = document.getElementById('sourceSelect')?.value || '';
+            
+            // 触发筛选事件
+            console.log('应用筛选:', this.filters);
+            
+            // TODO: 实现实际筛选逻辑
+            // dispatchEvent(new CustomEvent('filterChange', { detail: this.filters }));
+        },
+        
+        /**
+         * 清除所有筛选
+         */
+        clearFilters() {
+            // 重置状态
+            this.filters = {
+                time: 'today',
+                source: '',
+                sources: [],
+                sort: 'hot',
+                tags: []
+            };
+            
+            // 重置 DOM
+            document.querySelector('input[name="timeFilter"][value="today"]').checked = true;
+            document.getElementById('sourceSelect').value = '';
+            document.querySelectorAll('[id^="src-"]').forEach(cb => cb.checked = false);
+            document.getElementById('sortSelect').value = 'hot';
+            
+            // 更新UI
+            this.updateTagStyles();
+            this.updateSortDescription();
+            this.updateFilterSummary();
+            
+            // 触发清除事件
+            console.log('清除筛选');
+        },
+        
+        /**
+         * 保存为预设
+         */
+        saveFilterPreset() {
+            const name = prompt('请输入预设名称:');
+            if (name) {
+                console.log('保存筛选预设:', name, this.filters);
+                // TODO: 保存到 localStorage 或后端
+            }
+        }
+    };
+    
+    // 页面加载时初始化
+    document.addEventListener('DOMContentLoaded', () => FilterPanel.init());
+</script>

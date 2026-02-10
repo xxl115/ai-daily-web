@@ -31,8 +31,8 @@ export function SourceFilterPills({ articles, selectedSource, onSelectSource }: 
         className={cn(
           'flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all',
           selectedSource === null
-            ? 'bg-[#FF6B4A] text-white'
-            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            ? 'bg-[#FF6154] text-white'
+            : 'bg-[#F5F5F5] text-[#4A5568] hover:bg-[#E5E7EB]'
         )}
       >
         全部
@@ -44,8 +44,8 @@ export function SourceFilterPills({ articles, selectedSource, onSelectSource }: 
           className={cn(
             'flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all flex items-center gap-1.5',
             selectedSource === name
-              ? 'bg-[#FF6B4A] text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              ? 'bg-[#FF6154] text-white'
+              : 'bg-[#F5F5F5] text-[#4A5568] hover:bg-[#E5E7EB]'
           )}
         >
           <span>{name}</span>

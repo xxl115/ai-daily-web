@@ -1,0 +1,797 @@
+/**
+ * AI Daily 搜索筛选原型 - 全局样式
+ * 
+ * Product Hunt 风格设计语言
+ * 主要颜色: #FF6154 (红色), #1A1A1A (深色), #6B6B6B (灰色)
+ */
+
+/* ==================== CSS 变量定义 ==================== */
+:root {
+    /* 品牌色 */
+    --color-primary: #FF6154;
+    --color-primary-hover: #FF4433;
+    --color-primary-light: #FFF0EF;
+    
+    /* 文字色 */
+    --color-dark: #1A1A1A;
+    --color-gray: #6B6B6B;
+    --color-gray-light: #9B9B9B;
+    --color-gray-lighter: #E5E5E5;
+    
+    /* 背景色 */
+    --color-bg: #F5F5F5;
+    --color-bg-white: #FFFFFF;
+    
+    /* 边框色 */
+    --color-border: #E5E5E5;
+    --color-border-focus: #FF6154;
+    
+    /* 阴影 */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.12);
+    
+    /* 圆角 */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    
+    /* 过渡 */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.2s ease;
+    --transition-slow: 0.3s ease;
+}
+
+/* ==================== 全局样式 ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 
+                 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-dark);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==================== 动画定义 ==================== */
+
+/**
+ * 淡入动画
+ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/**
+ * 上滑淡入动画
+ */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/**
+ * 下滑淡入动画
+ */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/**
+ * 脉动动画 - 用于新功能标记
+ */
+@keyframes pulse {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.05);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/**
+ * 骨架屏闪烁动画
+ */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/**
+ * 加载旋转动画
+ */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/**
+ * 成功checkmark动画
+ */
+@keyframes checkmark {
+    0% {
+        stroke-dashoffset: 100;
+    }
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* ==================== 动画类 ==================== */
+
+/**
+ * 基础淡入
+ */
+.animate-fadeIn {
+    animation: fadeIn var(--transition-normal) forwards;
+}
+
+/**
+ * 上滑淡入
+ */
+.animate-fadeInUp {
+    animation: fadeInUp var(--transition-normal) forwards;
+}
+
+/**
+ * 下滑淡入
+ */
+.animate-fadeInDown {
+    animation: fadeInDown var(--transition-normal) forwards;
+}
+
+/**
+ * 脉动效果
+ */
+.animate-pulse {
+    animation: pulse 2s infinite;
+}
+
+/**
+ * 骨架屏
+ */
+.skeleton {
+    background: linear-gradient(90deg, 
+        var(--color-gray-lighter) 25%, 
+        #f0f0f0 50%, 
+        var(--color-gray-lighter) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--radius-sm);
+}
+
+/**
+ * 加载旋转
+ */
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* ==================== 按钮样式 ==================== */
+
+/**
+ * 主要按钮
+ */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: var(--color-primary);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/**
+ * 次要按钮
+ */
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: var(--color-gray-lighter);
+    color: var(--color-gray);
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-secondary:hover {
+    background-color: #d9d9d9;
+    color: var(--color-dark);
+}
+
+/**
+ * 文字按钮
+ */
+.btn-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background-color: transparent;
+    color: var(--color-gray);
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-text:hover {
+    background-color: var(--color-gray-lighter);
+    color: var(--color-primary);
+}
+
+/**
+ * 按钮尺寸变体
+ */
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.btn-lg {
+    padding: 14px 28px;
+    font-size: 16px;
+}
+
+/* ==================== 输入框样式 ==================== */
+
+/**
+ * 搜索输入框
+ */
+.search-input {
+    width: 100%;
+    padding: 12px 16px 12px 48px;
+    background-color: var(--color-gray-lighter);
+    border: 2px solid transparent;
+    border-radius: var(--radius-xl);
+    font-size: 15px;
+    color: var(--color-dark);
+    transition: all var(--transition-fast);
+}
+
+.search-input::placeholder {
+    color: var(--color-gray-light);
+}
+
+.search-input:hover {
+    background-color: #ebebeb;
+}
+
+.search-input:focus {
+    outline: none;
+    background-color: white;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px var(--color-primary-light);
+}
+
+/**
+ * 下拉选择框
+ */
+.select-input {
+    width: 100%;
+    padding: 10px 36px 10px 14px;
+    background-color: var(--color-gray-lighter);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    color: var(--color-dark);
+    cursor: pointer;
+    appearance: none;
+    transition: all var(--transition-fast);
+}
+
+.select-input:hover {
+    background-color: #ebebeb;
+}
+
+.select-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+/* ==================== 卡片样式 ==================== */
+
+/**
+ * 基础卡片
+ */
+.card {
+    background-color: white;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    transition: all var(--transition-normal);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/**
+ * 文章卡片
+ */
+.article-card {
+    background-color: white;
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.article-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+}
+
+/* ==================== 标签样式 ==================== */
+
+/**
+ * 筛选标签
+ */
+.filter-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background-color: var(--color-gray-lighter);
+    color: var(--color-gray);
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: none;
+}
+
+.filter-tag:hover {
+    background-color: var(--color-primary);
+    color: white;
+    transform: scale(1.05);
+}
+
+/**
+ * 激活的筛选标签
+ */
+.filter-tag-active {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.filter-tag-active:hover {
+    background-color: var(--color-primary-hover);
+}
+
+/**
+ * 可关闭的标签
+ */
+.filter-tag-removable {
+    padding-right: 8px;
+}
+
+.filter-tag-removable::after {
+    content: '×';
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.filter-tag-removable:hover::after {
+    opacity: 0.7;
+}
+
+/**
+ * 标签组容器
+ */
+.tag-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* ==================== Badge 样式 ==================== */
+
+/**
+ * 徽章
+ */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/**
+ * 主要徽章
+ */
+.badge-primary {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+/**
+ * 成功徽章
+ */
+.badge-success {
+    background-color: #E8F5E9;
+    color: #4CAF50;
+}
+
+/**
+ * 警告徽章
+ */
+.badge-warning {
+    background-color: #FFF3E0;
+    color: #FF9800;
+}
+
+/**
+ * 信息徽章
+ */
+.badge-info {
+    background-color: #E3F2FD;
+    color: #2196F3;
+}
+
+/**
+ * 带数字的徽章
+ */
+.badge-count {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    background-color: var(--color-primary);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ==================== 面板样式 ==================== */
+
+/**
+ * 筛选面板容器
+ */
+.filter-panel {
+    background-color: white;
+    border-bottom: 1px solid var(--color-border);
+    overflow: hidden;
+    transition: max-height var(--transition-slow) ease;
+}
+
+/**
+ * 筛选面板展开状态
+ */
+.filter-panel.expanded {
+    max-height: 500px;
+}
+
+/**
+ * 面板分组
+ */
+.filter-group {
+    margin-bottom: 24px;
+}
+
+.filter-group:last-child {
+    margin-bottom: 0;
+}
+
+.filter-group-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.filter-group-title svg {
+    width: 16px;
+    height: 16px;
+    color: var(--color-primary);
+}
+
+/* ==================== 下拉菜单样式 ==================== */
+
+/**
+ * 下拉容器
+ */
+.dropdown {
+    position: relative;
+}
+
+/**
+ * 下拉菜单
+ */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 8px;
+    background-color: white;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all var(--transition-fast);
+}
+
+.dropdown-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/**
+ * 下拉菜单项
+ */
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--color-dark);
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+}
+
+.dropdown-item:hover {
+    background-color: var(--color-gray-lighter);
+}
+
+.dropdown-item:first-child {
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.dropdown-item:last-child {
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+/**
+ * 下拉菜单分割线
+ */
+.dropdown-divider {
+    height: 1px;
+    background-color: var(--color-border);
+    margin: 8px 0;
+}
+
+/* ==================== 响应式设计 ==================== */
+
+/**
+ * 移动端适配
+ */
+@media (max-width: 640px) {
+    .filter-panel {
+        /* 移动端全宽 */
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        max-height: 70vh;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+    
+    .filter-panel.expanded {
+        transform: translateY(0);
+    }
+    
+    .article-card {
+        padding: 16px;
+    }
+    
+    .search-input {
+        padding: 10px 14px 10px 42px;
+        font-size: 14px;
+    }
+}
+
+/**
+ * 平板端适配
+ */
+@media (min-width: 641px) and (max-width: 1024px) {
+    .filter-panel {
+        /* 平板端两列布局 */
+    }
+}
+
+/**
+ * 桌面端适配
+ */
+@media (min-width: 1025px) {
+    .filter-panel {
+        /* 桌面端保持现有布局 */
+    }
+}
+
+/* ==================== 工具类 ==================== */
+
+/**
+ * 隐藏滚动条但保持功能
+ */
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/**
+ * 文本截断
+ */
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.text-truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.text-truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/**
+ * 渐变遮罩
+ */
+.gradient-mask {
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        white 20%,
+        white 100%
+    );
+}
+
+/**
+ * 玻璃拟态效果
+ */
+.glass {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/**
+ * 禁用状态
+ */
+.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/**
+ * 选中状态
+ */
+.selected {
+    background-color: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+/* ==================== 图标动画类 ==================== */
+
+/**
+ * 旋转图标
+ */
+.icon-spin {
+    animation: spin 1s linear infinite;
+}
+
+/**
+ * 摇摆动画
+ */
+@keyframes icon-bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+.icon-bounce {
+    animation: icon-bounce 2s ease-in-out infinite;
+}
+
+/**
+ * 图标悬停效果
+ */
+.icon-hover {
+    transition: transform var(--transition-fast);
+}
+
+.icon-hover:hover {
+    transform: scale(1.1);
+}

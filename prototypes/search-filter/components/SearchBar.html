@@ -1,0 +1,423 @@
+<!--
+  SearchBar 组件原型
+  对应后续 React 组件: components/layout/SearchBar.tsx
+  
+  功能:
+  - 关键词输入
+  - 实时搜索建议
+  - 回车搜索
+  - 聚焦/失焦状态管理
+  
+  设计特点:
+  - Product Hunt 风格圆角设计
+  - SVG 图标集成
+  - 下拉建议面板
+-->
+<div class="w-full max-w-2xl relative" id="searchContainer">
+    <!-- 搜索框容器 -->
+    <div class="relative">
+        <!-- 搜索图标 (SVG) -->
+        <svg 
+            class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 transition-colors"
+            id="searchIcon"
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+        >
+            <path 
+                stroke-linecap="round" 
+                stroke-linejoin="round" 
+                stroke-width="2" 
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+        </svg>
+        
+        <!-- 搜索输入框 -->
+        <input
+            type="text"
+            id="searchInput"
+            class="w-full pl-12 pr-24 py-3 bg-gray-100 border-2 border-transparent rounded-xl 
+                   focus:border-primary focus:bg-white focus:outline-none 
+                   transition-all duration-200 text-dark placeholder-gray-400"
+            placeholder="搜索 AI 新闻、产品、工具..."
+            autocomplete="off"
+            aria-label="搜索"
+            aria-expanded="false"
+            aria-controls="suggestionsDropdown"
+        />
+        
+        <!-- 右侧操作按钮 -->
+        <div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+            <!-- 清除按钮 (有内容时显示) -->
+            <button
+                type="button"
+                id="clearButton"
+                class="hidden p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-200 transition-colors"
+                aria-label="清除搜索"
+            >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            
+            <!-- 搜索按钮 -->
+            <button
+                type="button"
+                class="px-4 py-1.5 bg-primary text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium"
+                onclick="handleSearch()"
+            >
+                搜索
+            </button>
+        </div>
+    </div>
+    
+    <!-- 搜索建议下拉面板 -->
+    <div 
+        id="suggestionsDropdown" 
+        class="dropdown-menu absolute top-full left-0 right-0 mt-2 
+               bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50"
+        role="listbox"
+        aria-label="搜索建议"
+    >
+        <!-- 建议内容由 JS 动态生成 -->
+        <!-- 示例结构:
+        <div class="py-2">
+            <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                热门搜索
+            </div>
+            <button class="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                </svg>
+                <span class="text-dark">GPT-4</span>
+            </button>
+            <button class="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span class="text-dark">Claude 3</span>
+            </button>
+        </div>
+        -->
+    </div>
+</div>
+
+<!--
+  组件交互逻辑 (JavaScript)
+  
+  事件:
+  - input: 输入内容变化
+  - focus: 聚焦显示建议
+  - blur: 失焦隐藏建议
+  - keydown: 键盘导航 (Enter 搜索, Escape 关闭)
+  
+  方法:
+  - showSuggestions(): 显示建议面板
+  - hideSuggestions(): 隐藏建议面板
+  - updateSuggestions(keyword): 更新建议内容
+  - clearSearch(): 清除搜索内容
+  - handleSearch(): 执行搜索
+-->
+<script>
+    /**
+     * SearchBar 组件交互逻辑
+     * 
+     * 状态管理:
+     * - isOpen: 建议面板是否展开
+     * - suggestions: 当前建议列表
+     * - selectedIndex: 键盘选择的建议索引
+     */
+    const SearchBar = {
+        // 状态
+        isOpen: false,
+        suggestions: [],
+        selectedIndex: -1,
+        
+        // DOM 元素
+        elements: {
+            container: document.getElementById('searchContainer'),
+            input: document.getElementById('searchInput'),
+            clearBtn: document.getElementById('clearButton'),
+            dropdown: document.getElementById('suggestionsDropdown'),
+            icon: document.getElementById('searchIcon')
+        },
+        
+        /**
+         * 初始化
+         */
+        init() {
+            const { input, clearBtn, dropdown } = this.elements;
+            
+            // 输入事件
+            input.addEventListener('input', (e) => this.onInput(e.target.value));
+            
+            // 聚焦事件
+            input.addEventListener('focus', () => this.onFocus());
+            
+            // 失焦事件 (延迟以允许点击建议)
+            input.addEventListener('blur', () => setTimeout(() => this.onBlur(), 200));
+            
+            // 键盘事件
+            input.addEventListener('keydown', (e) => this.onKeydown(e));
+            
+            // 清除按钮点击
+            clearBtn.addEventListener('click', () => this.clearSearch());
+        },
+        
+        /**
+         * 输入处理
+         * @param {string} value - 输入的值
+         */
+        onInput(value) {
+            // 显示/隐藏清除按钮
+            this.elements.clearBtn.classList.toggle('hidden', !value);
+            
+            // 更新建议
+            if (value.length > 0) {
+                this.updateSuggestions(value);
+            } else {
+                this.hideSuggestions();
+            }
+        },
+        
+        /**
+         * 聚焦处理
+         */
+        onFocus() {
+            const { input } = this.elements;
+            
+            // 如果有内容或推荐，显示建议
+            if (input.value.length > 0) {
+                this.showSuggestions();
+            } else {
+                this.showRecommendations();
+            }
+            
+            // 更新 ARIA 属性
+            input.setAttribute('aria-expanded', 'true');
+        },
+        
+        /**
+         * 失焦处理
+         */
+        onBlur() {
+            // 延迟隐藏以允许点击
+            this.hideSuggestions();
+            
+            // 更新 ARIA 属性
+            this.elements.input.setAttribute('aria-expanded', 'false');
+        },
+        
+        /**
+         * 键盘导航
+         * @param {KeyboardEvent} e
+         */
+        onKeydown(e) {
+            const { key } = e;
+            
+            switch (key) {
+                case 'Enter':
+                    e.preventDefault();
+                    this.handleSearch();
+                    break;
+                    
+                case 'Escape':
+                    this.hideSuggestions();
+                    this.elements.input.blur();
+                    break;
+                    
+                case 'ArrowDown':
+                    e.preventDefault();
+                    this.selectNextSuggestion();
+                    break;
+                    
+                case 'ArrowUp':
+                    e.preventDefault();
+                    this.selectPrevSuggestion();
+                    break;
+            }
+        },
+        
+        /**
+         * 显示建议面板
+         */
+        showSuggestions() {
+            this.isOpen = true;
+            this.elements.dropdown.classList.add('active');
+        },
+        
+        /**
+         * 隐藏建议面板
+         */
+        hideSuggestions() {
+            this.isOpen = false;
+            this.selectedIndex = -1;
+            this.elements.dropdown.classList.remove('active');
+        },
+        
+        /**
+         * 显示推荐内容
+         */
+        showRecommendations() {
+            // 模拟热门推荐
+            const recommendations = [
+                { type: 'trending', text: 'GPT-4.5', icon: 'fire' },
+                { type: 'trending', text: 'Claude 3', icon: 'fire' },
+                { type: 'recent', text: 'AI 绘画工具', icon: 'clock' },
+                { type: 'recent', text: '开源大模型', icon: 'clock' }
+            ];
+            
+            this.renderSuggestions(recommendations);
+            this.showSuggestions();
+        },
+        
+        /**
+         * 更新建议列表
+         * @param {string} keyword - 搜索关键词
+         */
+        async updateSuggestions(keyword) {
+            // 模拟 API 调用
+            const mockSuggestions = [
+                { type: 'history', text: `搜索 "${keyword}"`, icon: 'clock' },
+                { type: 'suggestion', text: `${keyword} 最新消息`, icon: 'search' },
+                { type: 'suggestion', text: `${keyword} 产品发布`, icon: 'search' },
+                { type: 'suggestion', text: `${keyword} 评测`, icon: 'search' },
+                { type: 'product', text: `${keyword} 官方网站`, icon: 'link' }
+            ];
+            
+            this.renderSuggestions(mockSuggestions);
+            this.showSuggestions();
+        },
+        
+        /**
+         * 渲染建议列表
+         * @param {Array} suggestions - 建议列表
+         */
+        renderSuggestions(suggestions) {
+            const { dropdown } = this.elements;
+            
+            dropdown.innerHTML = suggestions.map((item, index) => `
+                <button 
+                    class="w-full px-4 py-2.5 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors
+                           ${index === this.selectedIndex ? 'bg-gray-50' : ''}"
+                    data-index="${index}"
+                >
+                    <!-- 图标 -->
+                    <span class="w-5 h-5 flex items-center justify-center">
+                        ${this.getIcon(item.icon)}
+                    </span>
+                    
+                    <!-- 文本 -->
+                    <span class="text-sm ${item.type === 'history' ? 'text-primary font-medium' : 'text-dark'}">
+                        ${item.text}
+                    </span>
+                </button>
+            `).join('');
+            
+            // 绑定点击事件
+            dropdown.querySelectorAll('button').forEach((btn, index) => {
+                btn.addEventListener('click', () => this.selectSuggestion(suggestions[index]));
+            });
+        },
+        
+        /**
+         * 获取图标 SVG
+         * @param {string} type - 图标类型
+         * @returns {string} SVG 字符串
+         */
+        getIcon(type) {
+            const icons = {
+                fire: `<svg class="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 23c6.075 0 11-4.925 11-11S18.075 1 12 1 1 5.925 1 12s4.925 11 11 11z"/>
+                </svg>`,
+                clock: `<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>`,
+                search: `<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>`,
+                link: `<svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>`
+            };
+            
+            return icons[type] || icons.search;
+        },
+        
+        /**
+         * 选择下一个建议
+         */
+        selectNextSuggestion() {
+            const items = this.elements.dropdown.querySelectorAll('button');
+            if (items.length === 0) return;
+            
+            this.selectedIndex = (this.selectedIndex + 1) % items.length;
+            this.updateSelection();
+        },
+        
+        /**
+         * 选择上一个建议
+         */
+        selectPrevSuggestion() {
+            const items = this.elements.dropdown.querySelectorAll('button');
+            if (items.length === 0) return;
+            
+            this.selectedIndex = this.selectedIndex <= 0 ? items.length - 1 : this.selectedIndex - 1;
+            this.updateSelection();
+        },
+        
+        /**
+         * 更新选择状态
+         */
+        updateSelection() {
+            const items = this.elements.dropdown.querySelectorAll('button');
+            items.forEach((item, index) => {
+                item.classList.toggle('bg-gray-50', index === this.selectedIndex);
+            });
+            
+            // 滚动到可见区域
+            if (this.selectedIndex >= 0) {
+                items[this.selectedIndex].scrollIntoView({ block: 'nearest' });
+            }
+        },
+        
+        /**
+         * 选择建议
+         * @param {Object} suggestion - 选择的建议
+         */
+        selectSuggestion(suggestion) {
+            this.elements.input.value = suggestion.text.replace(/^搜索 "|"/g, '');
+            this.handleSearch();
+        },
+        
+        /**
+         * 清除搜索
+         */
+        clearSearch() {
+            this.elements.input.value = '';
+            this.elements.clearBtn.classList.add('hidden');
+            this.hideSuggestions();
+            this.elements.input.focus();
+        },
+        
+        /**
+         * 执行搜索
+         */
+        handleSearch() {
+            const keyword = this.elements.input.value.trim();
+            if (!keyword) return;
+            
+            // 隐藏建议面板
+            this.hideSuggestions();
+            
+            // 触发搜索事件
+            console.log('执行搜索:', keyword);
+            
+            // TODO: 实现实际搜索逻辑
+            // dispatchEvent(new CustomEvent('search', { detail: { keyword } }));
+        }
+    };
+    
+    // 页面加载时初始化
+    document.addEventListener('DOMContentLoaded', () => SearchBar.init());
+</script>

@@ -1,14 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { SideNav } from '@/components/layout/SideNav';
-import { TimeNav } from '@/components/layout/TimeNav';
 import { Article } from '@/lib/types';
 import { fetchArticles, getMockArticles } from '@/lib/api';
 import { SearchBar } from '@/components/layout/SearchBar';
 import { SourceFilterPills } from '@/components/filters/SourceFilterPills';
 import { ArticleListPH } from '@/components/article/ArticleListPH';
-import { StatsPanel } from '@/components/layout/StatsPanel';
+import { Header } from '@/components/layout/Header';
+import { Sidebar } from '@/components/layout/Sidebar';
+import { TimeNav } from '@/components/layout/TimeNav';
 
 type Period = 'today' | 'yesterday' | 'week' | 'month';
 
@@ -21,7 +21,7 @@ export default function HomePage() {
 
   useEffect(() => {
     loadArticles();
-  }, [period]); // Reload when period changes
+  }, [period]);
 
   const loadArticles = async () => {
     setLoading(true);
@@ -52,64 +52,63 @@ export default function HomePage() {
     .map(name => ({ name, count: articles.filter(a => a.source === name).length }))
     .sort((a, b) => b.count - a.count);
 
-  const hotArticlesList = articles
-    .filter(a => a.hotScore >= 100)
-    .sort((a, b) => b.hotScore - a.hotScore)
-    .slice(0, 5);
-
   const hotArticles = articles.filter(a => a.hotScore >= 100).length;
 
-  // Period labels
   const periodLabels: Record<Period, string> = {
-    today: '今日热门',
+    today: '今日热门 AI 产品',
     yesterday: '昨日热门',
     week: '本周热门',
     month: '上月热门',
   };
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] flex">
-      {/* Left Sidebar - 240px */}
-      <SideNav sources={sources} hotArticles={hotArticlesList} currentPeriod={period} />
-
-      {/* Main Content - flexible width */}
-      <main className="flex-1 min-w-0">
-        <div className="max-w-[760px] mx-auto px-6 py-8">
-          {/* Search Bar - Full width */}
-          <div className="mb-6">
-            <SearchBar onSearch={setSearchKeyword} />
-          </div>
-
-          {/* Period Title */}
-          <h2 className="text-xl font-bold text-[#111827] mb-4">
-            {periodLabels[period]}
-          </h2>
-
-          {/* Time Navigation */}
-          <div className="mb-6">
-            <TimeNav value={period} onChange={setPeriod} />
-          </div>
-
-          {/* Source Filter Pills */}
-          <SourceFilterPills
-            articles={articles}
-            selectedSource={selectedSource}
-            onSelectSource={setSelectedSource}
-          />
-
-          {/* Articles List */}
-          <div className="mt-6">
-            <ArticleListPH
-              articles={filteredArticles}
-              loading={loading}
-              onArticleClick={(article) => window.open(article.url, '_blank', 'noopener,noreferrer')}
+    <div className="min-h-screen bg-[#F5F5F5]">
+      {/* Header - Product Hunt Style */}
+      <Header onSearch={setSearchKeyword} />
+      
+      <main className="max-w-[1200px] mx-auto pt-8 pb-12">
+        <div className="flex gap-8 px-4">
+          {/* Left Content - Product List (2/3 width) */}
+          <div className="flex-1">
+            {/* Page Title */}
+            <h1 className="text-2xl font-bold text-[#21293C] mb-6">
+              {periodLabels[period]}
+            </h1>
+            
+            {/* Time Navigation */}
+            <div className="mb-6">
+              <TimeNav value={period} onChange={setPeriod} />
+            </div>
+            
+            {/* Source Filter Pills */}
+            <SourceFilterPills
+              articles={articles}
+              selectedSource={selectedSource}
+              onSelectSource={setSelectedSource}
             />
+            
+            {/* Articles List */}
+            <div className="mt-6">
+              <ArticleListPH
+                articles={filteredArticles}
+                loading={loading}
+                onArticleClick={(article) => window.open(article.url, '_blank', 'noopener,noreferrer')}
+              />
+            </div>
           </div>
+          
+          {/* Right Sidebar (1/3 width) */}
+          <aside className="w-[320px] flex-shrink-0">
+            <Sidebar 
+              stats={{
+                total: articles.length,
+                hot: hotArticles,
+                sources: sources.length,
+              }}
+            />
+          </aside>
         </div>
       </main>
-
-      {/* Right Sidebar - 320px */}
-      <StatsPanel total={articles.length} hot={hotArticles} sources={sources.length} />
     </div>
   );
 }

@@ -1,0 +1,273 @@
+<!--
+  FilterTags 组件原型
+  对应后续 React 组件: components/filters/FilterTags.tsx
+  
+  功能:
+  - 显示当前活跃的筛选条件
+  - 支持单个标签移除
+  - 支持一键清除全部
+  - 动态更新状态
+  
+  设计特点:
+  - 标签组容器
+  - 可关闭的标签样式
+  - 悬停和点击反馈
+-->
+<div id="filterTags" class="mt-4 flex flex-wrap gap-2 items-center">
+    <span class="text-sm text-gray-500 mr-2">当前筛选:</span>
+    
+    <!-- 活跃筛选标签容器 -->
+    <div id="activeFilterTags" class="flex flex-wrap gap-2">
+        <!-- 示例标签结构 (实际由 JS 动态生成)
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium">
+            <span>今日</span>
+            <button onclick="removeTimeFilter()" class="hover:text-red-500 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </span>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium">
+            <span>OpenAI</span>
+            <button onclick="removeSourceFilter()" class="hover:text-red-500 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </span>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium">
+            <span>LLM</span>
+            <button onclick="removeTagFilter()" class="hover:text-red-500 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </span>
+        -->
+    </div>
+    
+    <!-- 清除全部按钮 (有筛选时显示) -->
+    <button 
+        id="clearAllFilters" 
+        class="hidden text-sm text-gray-500 hover:text-primary transition-colors flex items-center gap-1"
+        onclick="FilterTags.clearAll()"
+    >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+        清除全部
+    </button>
+    
+    <!-- 空状态 (无筛选时显示) -->
+    <span id="noFiltersMessage" class="text-sm text-gray-400">
+        暂无筛选条件
+    </span>
+</div>
+
+<!--
+  FilterTags 交互逻辑 (JavaScript)
+-->
+<script>
+    /**
+     * FilterTags 组件
+     * 管理活跃筛选标签的显示和交互
+     */
+    const FilterTags = {
+        // 当前活跃的筛选标签
+        activeFilters: [],
+        
+        // 标签配置
+        tagConfig: {
+            // 时间筛选
+            today: { label: '今日', icon: '🕐', type: 'time', description: '24小时内' },
+            yesterday: { label: '昨日', icon: '📅', type: 'time', description: '昨天' },
+            week: { label: '本周', icon: '📆', type: 'time', description: '7天内' },
+            month: { label: '本月', icon: '🗓️', type: 'time', description: '30天内' },
+            
+            // 来源
+            openai: { label: 'OpenAI', icon: '🏢', type: 'source', color: '#10A37F' },
+            google: { label: 'Google AI', icon: '🏢', type: 'source', color: '#4285F4' },
+            anthropic: { label: 'Anthropic', icon: '🏢', type: 'source', color: '#DCA579' },
+            mit: { label: 'MIT', icon: '🎓', type: 'source', color: '#A31F34' },
+            wired: { label: 'Wired', icon: '📰', type: 'source', color: '#000000' },
+            
+            // 标签
+            'LLM': { label: 'LLM', icon: '🏷️', type: 'tag', color: '#FF6154' },
+            'GPT-4': { label: 'GPT-4', icon: '🤖', type: 'tag', color: '#FF6154' },
+            'AI绘画': { label: 'AI绘画', icon: '🎨', type: 'tag', color: '#FF6154' },
+            'Claude': { label: 'Claude', icon: '🤖', type: 'tag', color: '#FF6154' },
+            '开源': { label: '开源', icon: '🔓', type: 'tag', color: '#FF6154' },
+            
+            // 排序 (特殊显示)
+            hot: { label: '热度优先', icon: '🔥', type: 'sort' },
+            newest: { label: '最新发布', icon: '🕐', type: 'sort' },
+            relevant: { label: '相关性', icon: '📊', type: 'sort' }
+        },
+        
+        // DOM 元素
+        elements: {
+            container: document.getElementById('filterTags'),
+            tagsContainer: document.getElementById('activeFilterTags'),
+            clearBtn: document.getElementById('clearAllFilters'),
+            noFiltersMsg: document.getElementById('noFiltersMessage')
+        },
+        
+        /**
+         * 添加筛选标签
+         * @param {string} key - 筛选键
+         * @param {*} value - 筛选值
+         */
+        addFilter(key, value) {
+            // 检查是否已存在
+            const exists = this.activeFilters.some(f => f.key === key && f.value === value);
+            if (exists) return;
+            
+            // 添加到活跃列表
+            this.activeFilters.push({ key, value });
+            this.render();
+        },
+        
+        /**
+         * 移除筛选标签
+         * @param {string} key - 筛选键
+         * @param {*} value - 筛选值
+         */
+        removeFilter(key, value) {
+            const index = this.activeFilters.findIndex(f => f.key === key && f.value === value);
+            if (index > -1) {
+                this.activeFilters.splice(index, 1);
+                this.render();
+                
+                // 触发移除事件
+                this.dispatchEvent('filterRemove', { key, value });
+            }
+        },
+        
+        /**
+         * 清除所有筛选
+         */
+        clearAll() {
+            this.activeFilters = [];
+            this.render();
+            
+            // 触发清除事件
+            this.dispatchEvent('filterClear', {});
+        },
+        
+        /**
+         * 设置所有筛选 (覆盖)
+         * @param {Array} filters - 筛选数组
+         */
+        setFilters(filters) {
+            this.activeFilters = [...filters];
+            this.render();
+        },
+        
+        /**
+         * 获取活跃筛选数量
+         */
+        getCount() {
+            return this.activeFilters.length;
+        },
+        
+        /**
+         * 渲染标签
+         */
+        render() {
+            const { tagsContainer, clearBtn, noFiltersMsg } = this.elements;
+            
+            // 清空容器
+            tagsContainer.innerHTML = '';
+            
+            if (this.activeFilters.length === 0) {
+                // 空状态
+                clearBtn.classList.add('hidden');
+                noFiltersMsg.classList.remove('hidden');
+                return;
+            }
+            
+            // 隐藏空状态消息
+            clearBtn.classList.remove('hidden');
+            noFiltersMsg.classList.add('hidden');
+            
+            // 渲染每个标签
+            this.activeFilters.forEach(filter => {
+                const tag = this.tagConfig[filter.value] || { 
+                    label: filter.value, 
+                    icon: '🏷️',
+                    type: 'custom'
+                };
+                
+                const tagElement = document.createElement('span');
+                tagElement.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium animate-fadeIn';
+                tagElement.dataset.key = filter.key;
+                tagElement.dataset.value = filter.value;
+                
+                tagElement.innerHTML = `
+                    <span>${tag.icon} ${tag.label}</span>
+                    <button 
+                        class="ml-0.5 text-primary/60 hover:text-red-500 transition-colors p-0.5 rounded-full hover:bg-red-100"
+                        onclick="FilterTags.removeFilter('${filter.key}', '${filter.value}')"
+                        aria-label="移除筛选"
+                    >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                `;
+                
+                tagsContainer.appendChild(tagElement);
+            });
+        },
+        
+        /**
+         * 派发自定义事件
+         * @param {string} name - 事件名称
+         * @param {Object} detail - 事件数据
+         */
+        dispatchEvent(name, detail) {
+            const event = new CustomEvent(`filterTag:${name}`, { detail });
+            document.dispatchEvent(event);
+        },
+        
+        /**
+         * 初始化示例数据
+         */
+        initDemo() {
+            // 添加一些示例筛选标签
+            this.addFilter('time', 'today');
+            this.addFilter('source', 'openai');
+            this.addFilter('tag', 'LLM');
+        }
+    };
+    
+    // 页面加载时初始化
+    document.addEventListener('DOMContentLoaded', () => {
+        // 可选：初始化演示数据
+        // FilterTags.initDemo();
+    });
+</script>
+
+<!--
+  组件样式 (内联，完整样式在 main.css 中)
+-->
+<style>
+    #filterTags .inline-flex {
+        animation: fadeInUp 0.2s ease-out;
+    }
+    
+    #filterTags .inline-flex button:hover {
+        transform: scale(1.1);
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
