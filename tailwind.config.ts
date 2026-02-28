@@ -1,42 +1,43 @@
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
-  darkMode: 'class',
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
       colors: {
-        primary: {
-          DEFAULT: '#FF6B4A',
-          light: '#FF8A6B',
-          dark: '#E55A3A',
-        },
-        background: {
-          primary: '#F9FAFB',
-          secondary: '#FFFFFF',
-          card: '#FFFFFF',
-          hover: '#F3F4F6',
-        },
-        text: {
-          primary: '#111827',
-          secondary: '#6B7280',
-          muted: '#9CA3AF',
-        },
-        success: '#10b981',
-        warning: '#f59e0b',
-        danger: '#ef4444',
+        primary: 'var(--primary)',
+        secondary: 'var(--secondary)',
+        dark: 'var(--dark)',
+        gray: 'var(--gray)',
+        light: 'var(--light)',
       },
-      borderRadius: {
-        'xl': '16px',
-        '2xl': '24px',
+      fontFamily: {
+        sans: [
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Segoe UI',
+          'Roboto',
+          'Oxygen',
+          'Ubuntu',
+          'sans-serif',
+        ],
+      },
+      animation: {
+        'pulse-slow': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'shimmer': 'shimmer 1.5s infinite',
+      },
+      keyframes: {
+        shimmer: {
+          '0%': { backgroundPosition: '200% 0' },
+          '100%': { backgroundPosition: '-200% 0' },
+        },
       },
     },
   },
   plugins: [],
 }
-
 export default config

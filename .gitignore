@@ -38,3 +38,14 @@ next-env.d.ts
 
 # worktrees
 .worktrees/
+
+# screenshots and prototypes
+*.png
+*.jpg
+*.jpeg
+prototype_screenshot.png
+devpage_screenshot.png
+product-homepage.png
+
+# superset
+.superset/
